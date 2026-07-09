@@ -24,6 +24,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as DashboardTransactionsRouteImport } from './routes/dashboard.transactions'
 import { Route as DashboardSharedRouteImport } from './routes/dashboard.shared'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
@@ -34,6 +35,14 @@ import { Route as DashboardChatRouteImport } from './routes/dashboard.chat'
 import { Route as DashboardAssetsRouteImport } from './routes/dashboard.assets'
 import { Route as DashboardAccountsRouteImport } from './routes/dashboard.accounts'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminReportsRouteImport } from './routes/admin.reports'
+import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
+import { Route as AdminBlogRouteImport } from './routes/admin.blog'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
+import { Route as AdminAccountsRouteImport } from './routes/admin.accounts'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -110,6 +119,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const DashboardTransactionsRoute = DashboardTransactionsRouteImport.update({
   id: '/transactions',
   path: '/transactions',
@@ -160,11 +174,51 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBlogRoute = AdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAccountsRoute = AdminAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/dashboard': typeof DashboardRouteWithChildren
@@ -176,6 +230,14 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof SignUpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/admin/accounts': typeof AdminAccountsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/accounts': typeof DashboardAccountsRoute
   '/dashboard/assets': typeof DashboardAssetsRoute
@@ -186,12 +248,12 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/shared': typeof DashboardSharedRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/features': typeof FeaturesRoute
@@ -202,6 +264,14 @@ export interface FileRoutesByTo {
   '/sign-up': typeof SignUpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/admin/accounts': typeof AdminAccountsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/accounts': typeof DashboardAccountsRoute
   '/dashboard/assets': typeof DashboardAssetsRoute
@@ -212,13 +282,14 @@ export interface FileRoutesByTo {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/shared': typeof DashboardSharedRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/dashboard': typeof DashboardRouteWithChildren
@@ -230,6 +301,14 @@ export interface FileRoutesById {
   '/sign-up': typeof SignUpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/admin/accounts': typeof AdminAccountsRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/blog': typeof AdminBlogRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/dashboard/accounts': typeof DashboardAccountsRoute
   '/dashboard/assets': typeof DashboardAssetsRoute
@@ -240,6 +319,7 @@ export interface FileRoutesById {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/shared': typeof DashboardSharedRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
@@ -259,6 +339,14 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/sitemap.xml'
     | '/terms'
+    | '/admin/accounts'
+    | '/admin/analytics'
+    | '/admin/blog'
+    | '/admin/feedback'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/transactions'
+    | '/admin/users'
     | '/blog/$slug'
     | '/dashboard/accounts'
     | '/dashboard/assets'
@@ -269,12 +357,12 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/shared'
     | '/dashboard/transactions'
+    | '/admin/'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/admin'
     | '/blog'
     | '/conditions'
     | '/features'
@@ -285,6 +373,14 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/sitemap.xml'
     | '/terms'
+    | '/admin/accounts'
+    | '/admin/analytics'
+    | '/admin/blog'
+    | '/admin/feedback'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/transactions'
+    | '/admin/users'
     | '/blog/$slug'
     | '/dashboard/accounts'
     | '/dashboard/assets'
@@ -295,6 +391,7 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/shared'
     | '/dashboard/transactions'
+    | '/admin'
     | '/dashboard'
   id:
     | '__root__'
@@ -312,6 +409,14 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/sitemap.xml'
     | '/terms'
+    | '/admin/accounts'
+    | '/admin/analytics'
+    | '/admin/blog'
+    | '/admin/feedback'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/transactions'
+    | '/admin/users'
     | '/blog/$slug'
     | '/dashboard/accounts'
     | '/dashboard/assets'
@@ -322,13 +427,14 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/shared'
     | '/dashboard/transactions'
+    | '/admin/'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   ConditionsRoute: typeof ConditionsRoute
   DashboardRoute: typeof DashboardRouteWithChildren
@@ -449,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/dashboard/transactions': {
       id: '/dashboard/transactions'
       path: '/transactions'
@@ -519,8 +632,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/feedback': {
+      id: '/admin/feedback'
+      path: '/feedback'
+      fullPath: '/admin/feedback'
+      preLoaderRoute: typeof AdminFeedbackRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blog': {
+      id: '/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AdminBlogRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/accounts': {
+      id: '/admin/accounts'
+      path: '/accounts'
+      fullPath: '/admin/accounts'
+      preLoaderRoute: typeof AdminAccountsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminAccountsRoute: typeof AdminAccountsRoute
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminBlogRoute: typeof AdminBlogRoute
+  AdminFeedbackRoute: typeof AdminFeedbackRoute
+  AdminReportsRoute: typeof AdminReportsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTransactionsRoute: typeof AdminTransactionsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAccountsRoute: AdminAccountsRoute,
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminBlogRoute: AdminBlogRoute,
+  AdminFeedbackRoute: AdminFeedbackRoute,
+  AdminReportsRoute: AdminReportsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminTransactionsRoute: AdminTransactionsRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface BlogRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
@@ -565,7 +760,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   ConditionsRoute: ConditionsRoute,
   DashboardRoute: DashboardRouteWithChildren,
