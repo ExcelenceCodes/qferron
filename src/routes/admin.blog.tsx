@@ -34,7 +34,7 @@ function AdminBlogPage() {
                   {p.title}
                 </Link>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  {formatDate(p.date)} · {p.readingTime} min read
+                  {formatDate(p.publishedAt)} · {p.readingMinutes} min read
                 </p>
               </div>
               <div className="flex items-center gap-2">
