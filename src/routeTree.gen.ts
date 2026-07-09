@@ -23,6 +23,16 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardTransactionsRouteImport } from './routes/dashboard.transactions'
+import { Route as DashboardSharedRouteImport } from './routes/dashboard.shared'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardRulesRouteImport } from './routes/dashboard.rules'
+import { Route as DashboardReportsRouteImport } from './routes/dashboard.reports'
+import { Route as DashboardReferralsRouteImport } from './routes/dashboard.referrals'
+import { Route as DashboardChatRouteImport } from './routes/dashboard.chat'
+import { Route as DashboardAssetsRouteImport } from './routes/dashboard.assets'
+import { Route as DashboardAccountsRouteImport } from './routes/dashboard.accounts'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
 const TermsRoute = TermsRouteImport.update({
@@ -95,6 +105,56 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTransactionsRoute = DashboardTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSharedRoute = DashboardSharedRouteImport.update({
+  id: '/shared',
+  path: '/shared',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardRulesRoute = DashboardRulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardReportsRoute = DashboardReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardReferralsRoute = DashboardReferralsRouteImport.update({
+  id: '/referrals',
+  path: '/referrals',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardChatRoute = DashboardChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAssetsRoute = DashboardAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAccountsRoute = DashboardAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -107,7 +167,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/conditions': typeof ConditionsRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/features': typeof FeaturesRoute
   '/feedback': typeof FeedbackRoute
   '/onboarding': typeof OnboardingRoute
@@ -117,6 +177,16 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/assets': typeof DashboardAssetsRoute
+  '/dashboard/chat': typeof DashboardChatRoute
+  '/dashboard/referrals': typeof DashboardReferralsRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/rules': typeof DashboardRulesRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/shared': typeof DashboardSharedRoute
+  '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -124,7 +194,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/conditions': typeof ConditionsRoute
-  '/dashboard': typeof DashboardRoute
   '/features': typeof FeaturesRoute
   '/feedback': typeof FeedbackRoute
   '/onboarding': typeof OnboardingRoute
@@ -134,6 +203,16 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/assets': typeof DashboardAssetsRoute
+  '/dashboard/chat': typeof DashboardChatRoute
+  '/dashboard/referrals': typeof DashboardReferralsRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/rules': typeof DashboardRulesRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/shared': typeof DashboardSharedRoute
+  '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,7 +221,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/conditions': typeof ConditionsRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/features': typeof FeaturesRoute
   '/feedback': typeof FeedbackRoute
   '/onboarding': typeof OnboardingRoute
@@ -152,6 +231,16 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/assets': typeof DashboardAssetsRoute
+  '/dashboard/chat': typeof DashboardChatRoute
+  '/dashboard/referrals': typeof DashboardReferralsRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/rules': typeof DashboardRulesRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/shared': typeof DashboardSharedRoute
+  '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +260,16 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/blog/$slug'
+    | '/dashboard/accounts'
+    | '/dashboard/assets'
+    | '/dashboard/chat'
+    | '/dashboard/referrals'
+    | '/dashboard/reports'
+    | '/dashboard/rules'
+    | '/dashboard/settings'
+    | '/dashboard/shared'
+    | '/dashboard/transactions'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -178,7 +277,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog'
     | '/conditions'
-    | '/dashboard'
     | '/features'
     | '/feedback'
     | '/onboarding'
@@ -188,6 +286,16 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/blog/$slug'
+    | '/dashboard/accounts'
+    | '/dashboard/assets'
+    | '/dashboard/chat'
+    | '/dashboard/referrals'
+    | '/dashboard/reports'
+    | '/dashboard/rules'
+    | '/dashboard/settings'
+    | '/dashboard/shared'
+    | '/dashboard/transactions'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -205,6 +313,16 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/blog/$slug'
+    | '/dashboard/accounts'
+    | '/dashboard/assets'
+    | '/dashboard/chat'
+    | '/dashboard/referrals'
+    | '/dashboard/reports'
+    | '/dashboard/rules'
+    | '/dashboard/settings'
+    | '/dashboard/shared'
+    | '/dashboard/transactions'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -213,7 +331,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   BlogRoute: typeof BlogRouteWithChildren
   ConditionsRoute: typeof ConditionsRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   FeaturesRoute: typeof FeaturesRoute
   FeedbackRoute: typeof FeedbackRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -324,6 +442,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/transactions': {
+      id: '/dashboard/transactions'
+      path: '/transactions'
+      fullPath: '/dashboard/transactions'
+      preLoaderRoute: typeof DashboardTransactionsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/shared': {
+      id: '/dashboard/shared'
+      path: '/shared'
+      fullPath: '/dashboard/shared'
+      preLoaderRoute: typeof DashboardSharedRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/rules': {
+      id: '/dashboard/rules'
+      path: '/rules'
+      fullPath: '/dashboard/rules'
+      preLoaderRoute: typeof DashboardRulesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/reports': {
+      id: '/dashboard/reports'
+      path: '/reports'
+      fullPath: '/dashboard/reports'
+      preLoaderRoute: typeof DashboardReportsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/referrals': {
+      id: '/dashboard/referrals'
+      path: '/referrals'
+      fullPath: '/dashboard/referrals'
+      preLoaderRoute: typeof DashboardReferralsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/chat': {
+      id: '/dashboard/chat'
+      path: '/chat'
+      fullPath: '/dashboard/chat'
+      preLoaderRoute: typeof DashboardChatRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/assets': {
+      id: '/dashboard/assets'
+      path: '/assets'
+      fullPath: '/dashboard/assets'
+      preLoaderRoute: typeof DashboardAssetsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/accounts': {
+      id: '/dashboard/accounts'
+      path: '/accounts'
+      fullPath: '/dashboard/accounts'
+      preLoaderRoute: typeof DashboardAccountsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/$slug'
@@ -344,13 +532,43 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface DashboardRouteChildren {
+  DashboardAccountsRoute: typeof DashboardAccountsRoute
+  DashboardAssetsRoute: typeof DashboardAssetsRoute
+  DashboardChatRoute: typeof DashboardChatRoute
+  DashboardReferralsRoute: typeof DashboardReferralsRoute
+  DashboardReportsRoute: typeof DashboardReportsRoute
+  DashboardRulesRoute: typeof DashboardRulesRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardSharedRoute: typeof DashboardSharedRoute
+  DashboardTransactionsRoute: typeof DashboardTransactionsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAccountsRoute: DashboardAccountsRoute,
+  DashboardAssetsRoute: DashboardAssetsRoute,
+  DashboardChatRoute: DashboardChatRoute,
+  DashboardReferralsRoute: DashboardReferralsRoute,
+  DashboardReportsRoute: DashboardReportsRoute,
+  DashboardRulesRoute: DashboardRulesRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardSharedRoute: DashboardSharedRoute,
+  DashboardTransactionsRoute: DashboardTransactionsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
   BlogRoute: BlogRouteWithChildren,
   ConditionsRoute: ConditionsRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   FeaturesRoute: FeaturesRoute,
   FeedbackRoute: FeedbackRoute,
   OnboardingRoute: OnboardingRoute,
