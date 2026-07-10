@@ -1,8 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download } from "lucide-react";
+import { Download, Mail } from "lucide-react";
+import { useState } from "react";
 import { AppShell, SectionCard, StatCard } from "@/components/app/app-shell";
 import { USER_NAV } from "@/lib/dashboard-nav";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { LoadingButton, useAsyncAction } from "@/components/ui/loading-button";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/reports")({
   head: () => ({ meta: [{ title: "Reports — Ferron" }, { name: "robots", content: "noindex" }] }),
@@ -19,15 +25,22 @@ const CATS = [
 ];
 
 function ReportsPage() {
+  const [mailOpen, setMailOpen] = useState(false);
+
   return (
     <AppShell
       nav={USER_NAV}
       title="Reports"
       subtitle="Monthly summaries and tax-ready exports."
       headerRight={
-        <Button size="sm" variant="outline">
-          <Download className="mr-1.5 h-4 w-4" /> Export PDF
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => setMailOpen(true)}>
+            <Mail className="mr-1.5 h-4 w-4" /> Mail me
+          </Button>
+          <Button size="sm" variant="outline">
+            <Download className="mr-1.5 h-4 w-4" /> Export PDF
+          </Button>
+        </div>
       }
     >
       <div className="grid gap-4 sm:grid-cols-3">
@@ -61,6 +74,48 @@ function ReportsPage() {
           <p className="mt-3 text-xs text-muted-foreground">Last 7 months (mocked)</p>
         </SectionCard>
       </div>
+
+      <MailMeDialog open={mailOpen} onOpenChange={setMailOpen} />
     </AppShell>
+  );
+}
+
+function MailMeDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+  const { loading, run } = useAsyncAction(async () => {
+    await new Promise((r) => setTimeout(r, 700));
+    toast.success("Report queued", { description: "It'll arrive in your inbox in under a minute." });
+    onOpenChange(false);
+  });
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" /> Mail me this report</DialogTitle>
+          <DialogDescription>We'll deliver a premium-typeset PDF to your inbox.</DialogDescription>
+        </DialogHeader>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            run();
+          }}
+          className="space-y-4"
+        >
+          <div className="grid gap-1.5">
+            <Label htmlFor="mail-to">Email</Label>
+            <Input id="mail-to" type="email" defaultValue="alex@ferron.app" required />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="mail-subject">Subject</Label>
+            <Input id="mail-subject" defaultValue="Your Ferron report — July" />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <LoadingButton type="submit" loading={loading} loadingText="Sending…">
+              <Mail className="mr-1.5 h-4 w-4" /> Send report
+            </LoadingButton>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
