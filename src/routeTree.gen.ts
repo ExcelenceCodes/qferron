@@ -31,6 +31,8 @@ import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settin
 import { Route as DashboardRulesRouteImport } from './routes/dashboard.rules'
 import { Route as DashboardReportsRouteImport } from './routes/dashboard.reports'
 import { Route as DashboardReferralsRouteImport } from './routes/dashboard.referrals'
+import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
+import { Route as DashboardDebtsRouteImport } from './routes/dashboard.debts'
 import { Route as DashboardChatRouteImport } from './routes/dashboard.chat'
 import { Route as DashboardAssetsRouteImport } from './routes/dashboard.assets'
 import { Route as DashboardAccountsRouteImport } from './routes/dashboard.accounts'
@@ -42,6 +44,7 @@ import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
+import { Route as AdminAiSettingsRouteImport } from './routes/admin.ai-settings'
 import { Route as AdminAccountsRouteImport } from './routes/admin.accounts'
 
 const TermsRoute = TermsRouteImport.update({
@@ -154,6 +157,16 @@ const DashboardReferralsRoute = DashboardReferralsRouteImport.update({
   path: '/referrals',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardDebtsRoute = DashboardDebtsRouteImport.update({
+  id: '/debts',
+  path: '/debts',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardChatRoute = DashboardChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -209,6 +222,11 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAiSettingsRoute = AdminAiSettingsRouteImport.update({
+  id: '/ai-settings',
+  path: '/ai-settings',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAccountsRoute = AdminAccountsRouteImport.update({
   id: '/accounts',
   path: '/accounts',
@@ -231,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/accounts': typeof AdminAccountsRoute
+  '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/feedback': typeof AdminFeedbackRoute
@@ -242,6 +261,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/accounts': typeof DashboardAccountsRoute
   '/dashboard/assets': typeof DashboardAssetsRoute
   '/dashboard/chat': typeof DashboardChatRoute
+  '/dashboard/debts': typeof DashboardDebtsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/rules': typeof DashboardRulesRoute
@@ -265,6 +286,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/accounts': typeof AdminAccountsRoute
+  '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/feedback': typeof AdminFeedbackRoute
@@ -276,6 +298,8 @@ export interface FileRoutesByTo {
   '/dashboard/accounts': typeof DashboardAccountsRoute
   '/dashboard/assets': typeof DashboardAssetsRoute
   '/dashboard/chat': typeof DashboardChatRoute
+  '/dashboard/debts': typeof DashboardDebtsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/rules': typeof DashboardRulesRoute
@@ -302,6 +326,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/accounts': typeof AdminAccountsRoute
+  '/admin/ai-settings': typeof AdminAiSettingsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/feedback': typeof AdminFeedbackRoute
@@ -313,6 +338,8 @@ export interface FileRoutesById {
   '/dashboard/accounts': typeof DashboardAccountsRoute
   '/dashboard/assets': typeof DashboardAssetsRoute
   '/dashboard/chat': typeof DashboardChatRoute
+  '/dashboard/debts': typeof DashboardDebtsRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/rules': typeof DashboardRulesRoute
@@ -340,6 +367,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin/accounts'
+    | '/admin/ai-settings'
     | '/admin/analytics'
     | '/admin/blog'
     | '/admin/feedback'
@@ -351,6 +379,8 @@ export interface FileRouteTypes {
     | '/dashboard/accounts'
     | '/dashboard/assets'
     | '/dashboard/chat'
+    | '/dashboard/debts'
+    | '/dashboard/notifications'
     | '/dashboard/referrals'
     | '/dashboard/reports'
     | '/dashboard/rules'
@@ -374,6 +404,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin/accounts'
+    | '/admin/ai-settings'
     | '/admin/analytics'
     | '/admin/blog'
     | '/admin/feedback'
@@ -385,6 +416,8 @@ export interface FileRouteTypes {
     | '/dashboard/accounts'
     | '/dashboard/assets'
     | '/dashboard/chat'
+    | '/dashboard/debts'
+    | '/dashboard/notifications'
     | '/dashboard/referrals'
     | '/dashboard/reports'
     | '/dashboard/rules'
@@ -410,6 +443,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin/accounts'
+    | '/admin/ai-settings'
     | '/admin/analytics'
     | '/admin/blog'
     | '/admin/feedback'
@@ -421,6 +455,8 @@ export interface FileRouteTypes {
     | '/dashboard/accounts'
     | '/dashboard/assets'
     | '/dashboard/chat'
+    | '/dashboard/debts'
+    | '/dashboard/notifications'
     | '/dashboard/referrals'
     | '/dashboard/reports'
     | '/dashboard/rules'
@@ -604,6 +640,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardReferralsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/notifications': {
+      id: '/dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications'
+      preLoaderRoute: typeof DashboardNotificationsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/debts': {
+      id: '/dashboard/debts'
+      path: '/debts'
+      fullPath: '/dashboard/debts'
+      preLoaderRoute: typeof DashboardDebtsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/chat': {
       id: '/dashboard/chat'
       path: '/chat'
@@ -681,6 +731,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ai-settings': {
+      id: '/admin/ai-settings'
+      path: '/ai-settings'
+      fullPath: '/admin/ai-settings'
+      preLoaderRoute: typeof AdminAiSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/accounts': {
       id: '/admin/accounts'
       path: '/accounts'
@@ -693,6 +750,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAccountsRoute: typeof AdminAccountsRoute
+  AdminAiSettingsRoute: typeof AdminAiSettingsRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminFeedbackRoute: typeof AdminFeedbackRoute
@@ -705,6 +763,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAccountsRoute: AdminAccountsRoute,
+  AdminAiSettingsRoute: AdminAiSettingsRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminFeedbackRoute: AdminFeedbackRoute,
@@ -731,6 +790,8 @@ interface DashboardRouteChildren {
   DashboardAccountsRoute: typeof DashboardAccountsRoute
   DashboardAssetsRoute: typeof DashboardAssetsRoute
   DashboardChatRoute: typeof DashboardChatRoute
+  DashboardDebtsRoute: typeof DashboardDebtsRoute
+  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardReferralsRoute: typeof DashboardReferralsRoute
   DashboardReportsRoute: typeof DashboardReportsRoute
   DashboardRulesRoute: typeof DashboardRulesRoute
@@ -744,6 +805,8 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAccountsRoute: DashboardAccountsRoute,
   DashboardAssetsRoute: DashboardAssetsRoute,
   DashboardChatRoute: DashboardChatRoute,
+  DashboardDebtsRoute: DashboardDebtsRoute,
+  DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardReferralsRoute: DashboardReferralsRoute,
   DashboardReportsRoute: DashboardReportsRoute,
   DashboardRulesRoute: DashboardRulesRoute,

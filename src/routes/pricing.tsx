@@ -134,7 +134,13 @@ function PricingPage() {
                 >
                   {label}
                   {label === "Yearly" && (
-                    <span className="ml-1.5 rounded-full bg-success/20 px-1.5 py-0.5 text-[10px] font-semibold text-success">
+                    <span
+                      className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                        active
+                          ? "bg-white/25 text-white"
+                          : "bg-primary/15 text-primary"
+                      }`}
+                    >
                       -25%
                     </span>
                   )}

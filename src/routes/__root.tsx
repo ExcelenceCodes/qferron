@@ -17,6 +17,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { GuestChatWidget } from "@/components/marketing/guest-chat-widget";
+import { WallpaperProvider } from "@/components/wallpaper-provider";
 
 function NotFoundComponent() {
   return (
@@ -171,7 +172,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AppChrome />
+        <WallpaperProvider>
+          <AppChrome />
+        </WallpaperProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

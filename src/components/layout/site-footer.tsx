@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
+import { Newsletter } from "@/components/marketing/newsletter";
 
 const COLS = [
   {
@@ -39,50 +40,31 @@ export function SiteFooter() {
             All your transactions in one place, with your professional personal
             accountant — quietly working while you live your life.
           </p>
+          <div className="mt-5">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Join our mail list</p>
+            <div className="mt-3">
+              <Newsletter variant="footer" />
+            </div>
+          </div>
           <div className="mt-5 flex items-center gap-2 text-muted-foreground">
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Twitter"
-              className="rounded-md p-2 hover:bg-accent hover:text-foreground"
-            >
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter" className="rounded-md p-2 hover:bg-accent hover:text-foreground">
               <Twitter className="h-4 w-4" />
             </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="rounded-md p-2 hover:bg-accent hover:text-foreground"
-            >
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="rounded-md p-2 hover:bg-accent hover:text-foreground">
               <Linkedin className="h-4 w-4" />
             </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="rounded-md p-2 hover:bg-accent hover:text-foreground"
-            >
+            <a href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub" className="rounded-md p-2 hover:bg-accent hover:text-foreground">
               <Github className="h-4 w-4" />
             </a>
           </div>
         </div>
         {COLS.map((col) => (
           <div key={col.heading}>
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              {col.heading}
-            </h3>
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{col.heading}</h3>
             <ul className="mt-4 space-y-2.5">
               {col.links.map((l) => (
                 <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    className="text-sm text-foreground/80 transition-colors hover:text-foreground"
-                  >
-                    {l.label}
-                  </Link>
+                  <Link to={l.to} className="text-sm text-foreground/80 transition-colors hover:text-foreground">{l.label}</Link>
                 </li>
               ))}
             </ul>
