@@ -171,7 +171,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AppChrome />
+        <WallpaperProvider>
+          <AppChrome />
+        </WallpaperProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
