@@ -1,10 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ComponentType, ReactNode } from "react";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Bell, Menu, X, type LucideIcon } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { WallpaperBackdrop } from "@/components/wallpaper-provider";
+import { NOTIFICATIONS } from "@/lib/mock/notifications";
 import { cn } from "@/lib/utils";
 
 export interface NavItem {
@@ -24,10 +27,14 @@ interface AppShellProps {
 export function AppShell({ nav, title, subtitle, headerRight, children }: AppShellProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const unread = NOTIFICATIONS.filter((n) => !n.read).length;
+  const notifPath = nav.some((n) => n.to.endsWith("/notifications"))
+    ? nav.find((n) => n.to.endsWith("/notifications"))!.to
+    : null;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
+    <div className="relative min-h-screen bg-background">
+      <WallpaperBackdrop />
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 w-64 border-r border-sidebar-border bg-sidebar transition-transform duration-200",
@@ -35,13 +42,13 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-16 items-center justify-between px-5 border-b border-sidebar-border">
+        <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-5">
           <Logo />
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu">
             <X className="h-5 w-5" />
           </Button>
         </div>
-        <nav className="flex flex-col gap-0.5 p-3" aria-label={title}>
+        <nav className="flex flex-col gap-0.5 overflow-y-auto p-3" aria-label={title}>
           {nav.map((item) => {
             const active = pathname === item.to || (item.to !== "/dashboard" && item.to !== "/admin" && pathname.startsWith(item.to));
             const Icon = item.icon;
@@ -65,20 +72,31 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
         </nav>
       </aside>
 
-      {/* Main */}
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border/60 bg-background/85 px-4 backdrop-blur-md sm:px-6">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu">
               <Menu className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="font-display text-lg font-semibold leading-tight text-foreground">{title}</h1>
-              {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+            <div className="min-w-0">
+              <h1 className="truncate font-display text-lg font-semibold leading-tight text-foreground">{title}</h1>
+              {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
             </div>
           </div>
           <div className="flex items-center gap-2">
             {headerRight}
+            {notifPath && (
+              <Link to={notifPath} aria-label="Notifications">
+                <Button variant="ghost" size="icon" className="relative">
+                  <Bell className="h-5 w-5" />
+                  {unread > 0 && (
+                    <Badge className="absolute -right-1 -top-1 h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px]">
+                      {unread}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            )}
             <ThemeToggle />
             <Link to="/">
               <Button variant="ghost" size="sm">Exit</Button>
@@ -99,30 +117,38 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
   );
 }
 
-export function StatCard({
-  label,
-  value,
-  hint,
-  tone = "default",
-}: {
+interface StatCardProps {
   label: string;
   value: string;
   hint?: string;
   tone?: "default" | "positive" | "negative";
-}) {
+  icon?: LucideIcon;
+}
+
+export function StatCard({ label, value, hint, tone = "default", icon: Icon }: StatCardProps) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p
-        className={cn(
-          "mt-2 font-display text-2xl font-semibold tabular-nums",
-          tone === "positive" && "text-success",
-          tone === "negative" && "text-destructive",
+    <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p
+            className={cn(
+              "mt-2 font-display text-2xl font-semibold tabular-nums",
+              tone === "positive" && "text-success",
+              tone === "negative" && "text-destructive",
+            )}
+          >
+            {value}
+          </p>
+          {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+        </div>
+        {Icon && (
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+            <Icon className="h-5 w-5" />
+          </span>
         )}
-      >
-        {value}
-      </p>
-      {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+      </div>
+      <span className="pointer-events-none absolute inset-x-0 -bottom-1 h-1 origin-left scale-x-0 bg-gradient-to-r from-primary via-primary to-transparent transition-transform duration-300 group-hover:scale-x-100" />
     </div>
   );
 }
@@ -138,7 +164,7 @@ export function SectionCard({
 }) {
   return (
     <section className="rounded-xl border border-border bg-card shadow-sm">
-      <header className="flex items-center justify-between border-b border-border px-5 py-3">
+      <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
         <h2 className="font-display text-sm font-semibold text-foreground">{title}</h2>
         {action}
       </header>
