@@ -111,7 +111,7 @@ function AccountDetailPanel({
   account: Account | null;
   onOpenChange: (v: boolean) => void;
 }) {
-  if (!account) return <SidePanel open={false} onOpenChange={onOpenChange} title="Account" />;
+  if (!account) return null;
   const Icon = accountIcon(account.type);
   const tx = TRANSACTIONS.filter((t) => t.accountId === account.id);
   const inflow = tx.filter((t) => t.direction === "in").reduce((s, t) => s + t.amount, 0);
