@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CurrencySelect } from "@/components/ui/currency-select";
-import { useState } from "react";
+import { useBaseCurrency } from "@/lib/base-currency";
 import { useWallpaper } from "@/components/wallpaper-provider";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/dashboard/settings")({
 });
 
 function SettingsPage() {
-  const [currency, setCurrency] = useState("USD");
+  const { currency, setCurrency } = useBaseCurrency();
   const { wallpaper, setWallpaperId, wallpapers } = useWallpaper();
 
   return (
@@ -35,6 +35,9 @@ function SettingsPage() {
             <div className="grid gap-1.5">
               <Label>Base currency</Label>
               <CurrencySelect value={currency} onChange={setCurrency} />
+              <p className="text-xs text-muted-foreground">
+                Every account uses this currency. Change here (or during onboarding) — never per account.
+              </p>
             </div>
             <Button>Save changes</Button>
           </div>
