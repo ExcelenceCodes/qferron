@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { SidePanel } from "@/components/ui/side-panel";
-import { CurrencySelect } from "@/components/ui/currency-select";
+import { useBaseCurrency } from "@/lib/base-currency";
 import { LoadingButton, useAsyncAction } from "@/components/ui/loading-button";
 import { ACCOUNTS, TRANSACTIONS, type Account, type AccountType } from "@/lib/mock/app";
 import { accountIcon, balanceSpot } from "@/lib/account-utils";
@@ -180,7 +180,7 @@ function AccountDetailPanel({
 
 function AddAccountDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const [type, setType] = useState<AccountType>("bank");
-  const [currency, setCurrency] = useState("USD");
+  const { currency } = useBaseCurrency();
   const { loading, run } = useAsyncAction(async () => {
     await new Promise((r) => setTimeout(r, 600));
     toast.success("Account created", { description: "Ready to accept transactions." });
@@ -219,7 +219,13 @@ function AddAccountDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
             </div>
             <div className="grid gap-1.5">
               <Label>Currency</Label>
-              <CurrencySelect value={currency} onChange={setCurrency} />
+              <div className="flex items-center gap-2 rounded-md border border-input bg-muted/40 px-3 py-2 text-sm">
+                <span className="font-mono text-xs text-muted-foreground">{currency}</span>
+                <span className="text-muted-foreground">Base currency (locked)</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Change your base currency in Settings.
+              </p>
             </div>
           </div>
           <div className="grid gap-1.5">

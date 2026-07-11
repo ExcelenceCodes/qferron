@@ -18,6 +18,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { GuestChatWidget } from "@/components/marketing/guest-chat-widget";
 import { WallpaperProvider } from "@/components/wallpaper-provider";
+import { BaseCurrencyProvider } from "@/lib/base-currency";
 
 function NotFoundComponent() {
   return (
@@ -173,7 +174,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <WallpaperProvider>
-          <AppChrome />
+          <BaseCurrencyProvider>
+            <AppChrome />
+          </BaseCurrencyProvider>
         </WallpaperProvider>
       </ThemeProvider>
     </QueryClientProvider>

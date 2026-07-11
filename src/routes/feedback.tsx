@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { LoadingButton, useAsyncAction } from "@/components/ui/loading-button";
 import { Newsletter } from "@/components/marketing/newsletter";
-import lovedCommunity from "@/assets/vectors/loved-community.png.asset.json";
+const lovedCommunity = { url: "/media/vectors/loved-community.png" };
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({

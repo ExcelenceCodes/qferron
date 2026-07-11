@@ -1,5 +1,5 @@
 import * as React from "react";
-import heroVideoAsset from "@/assets/video/hero-bg.mp4.asset.json";
+const heroVideoAsset = { url: "/media/video/hero-bg.mp4" };
 import { cn } from "@/lib/utils";
 
 interface HeroVideoProps {

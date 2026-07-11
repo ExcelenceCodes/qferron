@@ -18,11 +18,11 @@ import { Button } from "@/components/ui/button";
 import { HeroVideo, SubHero } from "@/components/marketing/hero-video";
 import { Newsletter } from "@/components/marketing/newsletter";
 import { formatCompact, formatMoney } from "@/lib/format";
-import subheroAsset from "@/assets/hero/subhero-bg.jpg.asset.json";
-import financialPower from "@/assets/vectors/financial-power.png.asset.json";
-import analysisReports from "@/assets/vectors/analysis-reports.png.asset.json";
-import lovedCommunity from "@/assets/vectors/loved-community.png.asset.json";
-import aiVector from "@/assets/vectors/ai.jpg.asset.json";
+const subheroAsset = { url: "/media/hero/subhero-bg.jpg" };
+const financialPower = { url: "/media/vectors/financial-power.png" };
+const analysisReports = { url: "/media/vectors/analysis-reports.png" };
+const lovedCommunity = { url: "/media/vectors/loved-community.png" };
+const aiVector = { url: "/media/vectors/ai.jpg" };
 
 export const Route = createFileRoute("/")({
   head: () => ({

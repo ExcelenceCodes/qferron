@@ -6,9 +6,9 @@ import { USER_NAV } from "@/lib/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import analin from "@/assets/accountants/analin.jpg.asset.json";
-import sage from "@/assets/accountants/sage.jpg.asset.json";
-import atlas from "@/assets/accountants/atlas.jpg.asset.json";
+const analin = { url: "/media/accountants/analin.jpg" };
+const sage = { url: "/media/accountants/sage.jpg" };
+const atlas = { url: "/media/accountants/atlas.jpg" };
 
 export const Route = createFileRoute("/dashboard/chat")({
   head: () => ({ meta: [{ title: "AI Accountant — Ferron" }, { name: "robots", content: "noindex" }] }),

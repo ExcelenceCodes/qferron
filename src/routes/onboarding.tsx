@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { CurrencySelect } from "@/components/ui/currency-select";
+import { useBaseCurrency } from "@/lib/base-currency";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding")({
@@ -39,19 +41,7 @@ const SOURCES = [
   "Other",
 ] as const;
 
-// Small curated currency list for the mock; backend phase seeds all ISO-4217.
-const CURRENCIES = [
-  { code: "USD", name: "US Dollar" },
-  { code: "EUR", name: "Euro" },
-  { code: "GBP", name: "British Pound" },
-  { code: "KES", name: "Kenyan Shilling" },
-  { code: "NGN", name: "Nigerian Naira" },
-  { code: "TZS", name: "Tanzanian Shilling" },
-  { code: "INR", name: "Indian Rupee" },
-  { code: "JPY", name: "Japanese Yen" },
-  { code: "CNY", name: "Chinese Yuan" },
-  { code: "ZAR", name: "South African Rand" },
-];
+// Base currency uses the full ISO list via CurrencySelect.
 
 const ACCOUNTANTS = [
   {
@@ -83,7 +73,7 @@ function OnboardingPage() {
   const [step, setStep] = useState<Step>(0);
   const [job, setJob] = useState<string | null>(null);
   const [source, setSource] = useState<string | null>(null);
-  const [currency, setCurrency] = useState<string>("USD");
+  const { currency, setCurrency } = useBaseCurrency();
   const [accountant, setAccountant] = useState<string | null>(null);
   const [referral, setReferral] = useState("");
   const total = 5;
@@ -159,17 +149,10 @@ function OnboardingPage() {
               title="What's your base currency?"
               subtitle="You can add more currencies later. Ferron supports every currency in the world."
             >
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-              >
-                {CURRENCIES.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.code} — {c.name}
-                  </option>
-                ))}
-              </select>
+              <CurrencySelect value={currency} onChange={setCurrency} placeholder="Search all currencies…" />
+              <p className="mt-2 text-xs text-muted-foreground">
+                This is your account's base currency. All accounts inherit it and can only be changed here or in Settings.
+              </p>
             </StepBlock>
           )}
 
