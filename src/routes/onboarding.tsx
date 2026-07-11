@@ -73,7 +73,7 @@ function OnboardingPage() {
   const [step, setStep] = useState<Step>(0);
   const [job, setJob] = useState<string | null>(null);
   const [source, setSource] = useState<string | null>(null);
-  const [currency, setCurrency] = useState<string>("USD");
+  const { currency, setCurrency } = useBaseCurrency();
   const [accountant, setAccountant] = useState<string | null>(null);
   const [referral, setReferral] = useState("");
   const total = 5;
