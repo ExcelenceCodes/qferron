@@ -47,17 +47,37 @@ function AdminAiSettingsPage() {
 
 function AiFunctionRow({ fn }: { fn: AIFunctionMap }) {
   const [systemPrompt, setSystemPrompt] = useState(fn.systemPrompt);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const save = useAsyncAction(async () => {
     await new Promise((r) => setTimeout(r, 500));
     toast.success(`Updated "${fn.buttonLabel}" configuration`);
   });
   const compose = useAsyncAction(async () => {
     await new Promise((r) => setTimeout(r, 900));
+    const tokens = fn.dataInjections.map((d) => `[[${d}]]`).join(", ");
     setSystemPrompt(
-      `You are Ferron for "${fn.location}". Respond with concise ${fn.markupSupport.join(" or ")}. Use provided data: ${fn.dataInjections.join(", ")}.`,
+      `You are Ferron for "${fn.location}". Respond with concise ${fn.markupSupport.join(" or ")}. Use provided data: ${tokens}.`,
     );
     toast.success("Perfect prompt generated");
   });
+
+  function insertToken(token: string) {
+    const el = textareaRef.current;
+    const snippet = `[[${token}]]`;
+    if (!el) {
+      setSystemPrompt((p) => `${p}${p.endsWith(" ") || p.length === 0 ? "" : " "}${snippet}`);
+      return;
+    }
+    const start = el.selectionStart ?? el.value.length;
+    const end = el.selectionEnd ?? el.value.length;
+    const next = el.value.slice(0, start) + snippet + el.value.slice(end);
+    setSystemPrompt(next);
+    requestAnimationFrame(() => {
+      el.focus();
+      const pos = start + snippet.length;
+      el.setSelectionRange(pos, pos);
+    });
+  }
 
   return (
     <Collapsible className="rounded-lg border border-border bg-background/50">
@@ -105,13 +125,32 @@ function AiFunctionRow({ fn }: { fn: AIFunctionMap }) {
                 <Wand2 className="mr-1.5 h-3.5 w-3.5" /> Compose with AI
               </LoadingButton>
             </div>
-            <Textarea value={systemPrompt} onChange={(e) => setSystemPrompt(e.target.value)} rows={4} />
+            <Textarea
+              ref={textareaRef}
+              value={systemPrompt}
+              onChange={(e) => setSystemPrompt(e.target.value)}
+              rows={5}
+              className="font-mono text-xs"
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Reference injected data with <code className="rounded bg-muted px-1">[[token]]</code> — click a
+              token below to insert it at the cursor.
+            </p>
           </div>
           <div className="grid gap-1.5 md:col-span-2">
             <Label>Data injections / contextualisations</Label>
             <div className="flex flex-wrap gap-1.5 rounded-md border border-input bg-background px-3 py-2">
               {fn.dataInjections.map((d) => (
-                <Badge key={d} variant="outline" className="font-mono">{d}</Badge>
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => insertToken(d)}
+                  className="group inline-flex items-center gap-1 rounded-md border border-border bg-muted/50 px-2 py-1 font-mono text-xs text-foreground transition-colors hover:border-primary hover:bg-primary/10 hover:text-primary"
+                  title={`Insert [[${d}]] at cursor`}
+                >
+                  <Plus className="h-3 w-3 opacity-60 group-hover:opacity-100" />
+                  [[{d}]]
+                </button>
               ))}
             </div>
           </div>
