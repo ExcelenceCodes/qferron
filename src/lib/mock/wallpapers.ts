@@ -1,9 +1,9 @@
 // NOTE: TODO backend phase — seed these wallpapers into the Supabase `wallpapers`
 // table (bucket: brand-assets). For now they are shipped as CDN assets so the
 // picker works end-to-end during the UI phase.
-import aurora from "@/assets/wallpapers/aurora.jpg.asset.json";
-import dusk from "@/assets/wallpapers/dusk.jpg.asset.json";
-import canyon from "@/assets/wallpapers/canyon.jpg.asset.json";
+const aurora = { url: "/media/wallpapers/aurora.jpg" };
+const dusk = { url: "/media/wallpapers/dusk.jpg" };
+const canyon = { url: "/media/wallpapers/canyon.jpg" };
 
 export interface Wallpaper {
   id: string;

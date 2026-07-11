@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import { formatCompact } from "@/lib/format";
 import { Newsletter } from "@/components/marketing/newsletter";
-import financialPower from "@/assets/vectors/financial-power.png.asset.json";
-import analysisReports from "@/assets/vectors/analysis-reports.png.asset.json";
+const financialPower = { url: "/media/vectors/financial-power.png" };
+const analysisReports = { url: "/media/vectors/analysis-reports.png" };
 
 export const Route = createFileRoute("/features")({
   head: () => ({

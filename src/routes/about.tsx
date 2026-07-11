@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Flag, Globe, Rocket, Sparkles, Users } from "lucide-react";
 import { formatCompact } from "@/lib/format";
 import { Newsletter } from "@/components/marketing/newsletter";
-import analin from "@/assets/accountants/analin.jpg.asset.json";
-import sage from "@/assets/accountants/sage.jpg.asset.json";
+const analin = { url: "/media/accountants/analin.jpg" };
+const sage = { url: "/media/accountants/sage.jpg" };
 
 export const Route = createFileRoute("/about")({
   head: () => ({
