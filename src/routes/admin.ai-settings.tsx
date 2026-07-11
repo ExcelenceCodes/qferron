@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Bot, ChevronDown, Sparkles, Wand2 } from "lucide-react";
+import { Bot, ChevronDown, Plus, Sparkles, Wand2 } from "lucide-react";
+import { useRef } from "react";
 import { useState } from "react";
 import { AppShell, SectionCard } from "@/components/app/app-shell";
 import { ADMIN_NAV } from "@/lib/dashboard-nav";
