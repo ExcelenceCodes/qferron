@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { CurrencySelect } from "@/components/ui/currency-select";
+import { useBaseCurrency } from "@/lib/base-currency";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding")({
@@ -39,19 +41,7 @@ const SOURCES = [
   "Other",
 ] as const;
 
-// Small curated currency list for the mock; backend phase seeds all ISO-4217.
-const CURRENCIES = [
-  { code: "USD", name: "US Dollar" },
-  { code: "EUR", name: "Euro" },
-  { code: "GBP", name: "British Pound" },
-  { code: "KES", name: "Kenyan Shilling" },
-  { code: "NGN", name: "Nigerian Naira" },
-  { code: "TZS", name: "Tanzanian Shilling" },
-  { code: "INR", name: "Indian Rupee" },
-  { code: "JPY", name: "Japanese Yen" },
-  { code: "CNY", name: "Chinese Yuan" },
-  { code: "ZAR", name: "South African Rand" },
-];
+// Base currency uses the full ISO list via CurrencySelect.
 
 const ACCOUNTANTS = [
   {
