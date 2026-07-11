@@ -149,17 +149,10 @@ function OnboardingPage() {
               title="What's your base currency?"
               subtitle="You can add more currencies later. Ferron supports every currency in the world."
             >
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
-              >
-                {CURRENCIES.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.code} — {c.name}
-                  </option>
-                ))}
-              </select>
+              <CurrencySelect value={currency} onChange={setCurrency} placeholder="Search all currencies…" />
+              <p className="mt-2 text-xs text-muted-foreground">
+                This is your account's base currency. All accounts inherit it and can only be changed here or in Settings.
+              </p>
             </StepBlock>
           )}
 
