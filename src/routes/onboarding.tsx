@@ -232,16 +232,18 @@ function OnboardingPage() {
                 Back
               </Button>
               <Button
-                disabled={!canNext}
+                disabled={!canNext || saving}
                 onClick={() => {
                   if (step === 4) {
-                    toast.success("Onboarding complete!");
+                    void finish();
+                    return;
                   }
                   setStep((s) => (s + 1) as Step);
                 }}
               >
-                {step === 4 ? "Finish" : "Continue"}
+                {step === 4 ? (saving ? "Saving…" : "Finish") : "Continue"}
               </Button>
+
             </div>
           )}
         </div>
