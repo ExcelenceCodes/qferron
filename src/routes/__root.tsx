@@ -19,6 +19,8 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { GuestChatWidget } from "@/components/marketing/guest-chat-widget";
 import { WallpaperProvider } from "@/components/wallpaper-provider";
 import { BaseCurrencyProvider } from "@/lib/base-currency";
+import { AuthProvider } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -153,7 +155,18 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function AppChrome() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  // Later phases: hide marketing chrome inside authed / admin shells
+  const router = useRouter();
+  const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      void router.invalidate();
+      if (event !== "SIGNED_OUT") void queryClient.invalidateQueries();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [router, queryClient]);
+
   const isMarketing = !pathname.startsWith("/dashboard") && !pathname.startsWith("/admin");
   return (
     <>
@@ -170,15 +183,19 @@ function AppChrome() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <WallpaperProvider>
-          <BaseCurrencyProvider>
-            <AppChrome />
-          </BaseCurrencyProvider>
-        </WallpaperProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <WallpaperProvider>
+            <BaseCurrencyProvider>
+              <AppChrome />
+            </BaseCurrencyProvider>
+          </WallpaperProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
+
   );
 }

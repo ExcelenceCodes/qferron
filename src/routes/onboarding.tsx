@@ -6,6 +6,8 @@ import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { CurrencySelect } from "@/components/ui/currency-select";
 import { useBaseCurrency } from "@/lib/base-currency";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding")({
@@ -76,8 +78,30 @@ function OnboardingPage() {
   const { currency, setCurrency } = useBaseCurrency();
   const [accountant, setAccountant] = useState<string | null>(null);
   const [referral, setReferral] = useState("");
+  const [saving, setSaving] = useState(false);
+  const { user, refreshProfile } = useAuth();
   const total = 5;
   const progress = useMemo(() => Math.min(step / total, 1), [step]);
+
+  async function finish() {
+    setSaving(true);
+    if (user) {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ base_currency: currency, onboarded: true })
+        .eq("id", user.id);
+      if (error) {
+        setSaving(false);
+        toast.error("Could not save your setup", { description: error.message });
+        return;
+      }
+      await refreshProfile();
+    }
+    setSaving(false);
+    toast.success("Onboarding complete!");
+    setStep((s) => (s + 1) as Step);
+  }
+
 
   const canNext =
     (step === 0 && !!job) ||
@@ -232,16 +256,18 @@ function OnboardingPage() {
                 Back
               </Button>
               <Button
-                disabled={!canNext}
+                disabled={!canNext || saving}
                 onClick={() => {
                   if (step === 4) {
-                    toast.success("Onboarding complete!");
+                    void finish();
+                    return;
                   }
                   setStep((s) => (s + 1) as Step);
                 }}
               >
-                {step === 4 ? "Finish" : "Continue"}
+                {step === 4 ? (saving ? "Saving…" : "Finish") : "Continue"}
               </Button>
+
             </div>
           )}
         </div>

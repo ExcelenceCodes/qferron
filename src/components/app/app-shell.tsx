@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ComponentType, ReactNode } from "react";
 import { useState } from "react";
-import { Bell, Menu, X, type LucideIcon } from "lucide-react";
+import { Bell, LogOut, Menu, User, X, type LucideIcon } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,16 @@ import { Badge } from "@/components/ui/badge";
 import { WallpaperBackdrop } from "@/components/wallpaper-provider";
 import { NOTIFICATIONS } from "@/lib/mock/notifications";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useNavigate } from "@tanstack/react-router";
 
 export interface NavItem {
   to: string;
@@ -28,6 +38,8 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
   const unread = NOTIFICATIONS.filter((n) => !n.read).length;
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
   const notifPath = nav.some((n) => n.to.endsWith("/notifications"))
     ? nav.find((n) => n.to.endsWith("/notifications"))!.to
     : null;
@@ -98,9 +110,35 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
               </Link>
             )}
             <ThemeToggle />
-            <Link to="/">
-              <Button variant="ghost" size="sm">Exit</Button>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Account menu">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">
+                  {profile?.full_name || user?.email || "Account"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate({ to: "/dashboard/settings" })}>
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate({ to: "/" })}>
+                  Back to site
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={() => {
+                    void signOut().then(() =>
+                      navigate({ to: "/sign-in", replace: true }),
+                    );
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
         <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">{children}</div>
