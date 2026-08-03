@@ -76,8 +76,30 @@ function OnboardingPage() {
   const { currency, setCurrency } = useBaseCurrency();
   const [accountant, setAccountant] = useState<string | null>(null);
   const [referral, setReferral] = useState("");
+  const [saving, setSaving] = useState(false);
+  const { user, refreshProfile } = useAuth();
   const total = 5;
   const progress = useMemo(() => Math.min(step / total, 1), [step]);
+
+  async function finish() {
+    setSaving(true);
+    if (user) {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ base_currency: currency, onboarded: true })
+        .eq("id", user.id);
+      if (error) {
+        setSaving(false);
+        toast.error("Could not save your setup", { description: error.message });
+        return;
+      }
+      await refreshProfile();
+    }
+    setSaving(false);
+    toast.success("Onboarding complete!");
+    setStep((s) => (s + 1) as Step);
+  }
+
 
   const canNext =
     (step === 0 && !!job) ||
