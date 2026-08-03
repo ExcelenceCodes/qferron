@@ -19,6 +19,8 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { GuestChatWidget } from "@/components/marketing/guest-chat-widget";
 import { WallpaperProvider } from "@/components/wallpaper-provider";
 import { BaseCurrencyProvider } from "@/lib/base-currency";
+import { AuthProvider } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
