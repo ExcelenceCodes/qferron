@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth";
 import { Logo } from "@/components/brand/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { user, loading, signOut } = useAuth();
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between gap-4">
@@ -36,14 +38,34 @@ export function SiteHeader() {
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link to="/sign-in" className="hidden md:inline-flex">
-            <Button variant="ghost" size="sm">
-              Sign in
-            </Button>
-          </Link>
-          <Link to="/sign-up" className="hidden md:inline-flex">
-            <Button size="sm">Get started</Button>
-          </Link>
+          {!loading && user ? (
+            <>
+              <Link to="/dashboard" className="hidden md:inline-flex">
+                <Button variant="ghost" size="sm">
+                  <LayoutDashboard className="mr-1.5 h-4 w-4" /> Dashboard
+                </Button>
+              </Link>
+              <Button
+                size="sm"
+                variant="outline"
+                className="hidden md:inline-flex"
+                onClick={() => void signOut()}
+              >
+                <LogOut className="mr-1.5 h-4 w-4" /> Sign out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/sign-in" className="hidden md:inline-flex">
+                <Button variant="ghost" size="sm">
+                  Sign in
+                </Button>
+              </Link>
+              <Link to="/sign-up" className="hidden md:inline-flex">
+                <Button size="sm">Get started</Button>
+              </Link>
+            </>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -75,16 +97,38 @@ export function SiteHeader() {
             </Link>
           ))}
           <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border/60 pt-3">
-            <Link to="/sign-in" onClick={() => setOpen(false)}>
-              <Button variant="outline" size="sm" className="w-full">
-                Sign in
-              </Button>
-            </Link>
-            <Link to="/sign-up" onClick={() => setOpen(false)}>
-              <Button size="sm" className="w-full">
-                Get started
-              </Button>
-            </Link>
+            {!loading && user ? (
+              <>
+                <Link to="/dashboard" onClick={() => setOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    setOpen(false);
+                    void signOut();
+                  }}
+                >
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/sign-in" onClick={() => setOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Sign in
+                  </Button>
+                </Link>
+                <Link to="/sign-up" onClick={() => setOpen(false)}>
+                  <Button size="sm" className="w-full">
+                    Get started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </div>
