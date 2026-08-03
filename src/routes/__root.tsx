@@ -186,13 +186,16 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <WallpaperProvider>
-          <BaseCurrencyProvider>
-            <AppChrome />
-          </BaseCurrencyProvider>
-        </WallpaperProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <WallpaperProvider>
+            <BaseCurrencyProvider>
+              <AppChrome />
+            </BaseCurrencyProvider>
+          </WallpaperProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
+
   );
 }
