@@ -1,10 +1,16 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+
+const searchSchema = z.object({ redirect: z.string().optional() });
 
 export const Route = createFileRoute("/sign-in")({
+  validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Sign in — Ferron" },
@@ -16,9 +22,48 @@ export const Route = createFileRoute("/sign-in")({
   component: SignInPage,
 });
 
+function safePath(value?: string) {
+  if (!value) return null;
+  return value.startsWith("/") && !value.startsWith("//") ? value : null;
+}
+
 function SignInPage() {
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const search = useSearch({ from: "/sign-in" });
+  const next = safePath(search.redirect);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) {
+      toast.error("Could not sign in", { description: error.message });
+      return;
+    }
+    toast.success("Welcome back");
+    navigate({ to: next ?? "/dashboard" });
+  }
+
+  async function handleGoogle() {
+    setGoogleLoading(true);
+    if (next) sessionStorage.setItem("ferron:next", next);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setGoogleLoading(false);
+      toast.error("Google sign-in failed", { description: String(result.error.message ?? result.error) });
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: next ?? "/dashboard" });
+  }
+
   return (
     <AuthShell
       title="Welcome back"
@@ -32,27 +77,16 @@ function SignInPage() {
         </>
       }
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setLoading(true);
-          setTimeout(() => {
-            setLoading(false);
-            toast.success("Signed in (demo)", {
-              description: "Backend wiring lands in the next phase.",
-            });
-            navigate({ to: "/onboarding" });
-          }, 700);
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit} className="space-y-4">
         <Button
           type="button"
           variant="outline"
           className="w-full h-11"
-          onClick={() => toast.info("Google sign-in wires in the auth phase.")}
+          disabled={googleLoading}
+          onClick={handleGoogle}
         >
-          <GoogleGlyph className="mr-2 h-4 w-4" /> Continue with Google
+          <GoogleGlyph className="mr-2 h-4 w-4" />
+          {googleLoading ? "Connecting…" : "Continue with Google"}
         </Button>
         <div className="relative py-2 text-center">
           <span className="relative z-10 bg-card px-2 text-xs uppercase tracking-widest text-muted-foreground">
@@ -65,20 +99,27 @@ function SignInPage() {
           <input
             required
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-md border border-input bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
           />
         </label>
         <label className="block text-sm">
           <span className="mb-1.5 flex items-center justify-between font-medium">
             Password
-            <a href="#" className="text-xs font-normal text-primary hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-xs font-normal text-primary hover:underline"
+            >
               Forgot?
-            </a>
+            </Link>
           </span>
           <input
             required
             type="password"
             minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-md border border-input bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
           />
         </label>
