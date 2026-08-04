@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { AppShell, SectionCard } from "@/components/app/app-shell";
 import { USER_NAV } from "@/lib/dashboard-nav";
 import { Button } from "@/components/ui/button";
@@ -6,8 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CurrencySelect } from "@/components/ui/currency-select";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { useBaseCurrency } from "@/lib/base-currency";
 import { useWallpaper } from "@/components/wallpaper-provider";
+import { useAuth } from "@/lib/auth";
+import { useUpdateProfile } from "@/lib/queries/finance";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/dashboard/settings")({
@@ -18,6 +24,40 @@ export const Route = createFileRoute("/dashboard/settings")({
 function SettingsPage() {
   const { currency, setCurrency } = useBaseCurrency();
   const { wallpaper, setWallpaperId, wallpapers } = useWallpaper();
+  const { user, profile } = useAuth();
+  const updateProfile = useUpdateProfile();
+
+  const [fullName, setFullName] = useState("");
+  const [sendingReset, setSendingReset] = useState(false);
+
+  useEffect(() => {
+    setFullName(profile?.full_name ?? "");
+  }, [profile?.full_name]);
+
+  async function saveProfile() {
+    try {
+      await updateProfile.mutateAsync({ full_name: fullName || null });
+      toast.success("Profile saved");
+    } catch (e) {
+      toast.error("Could not save profile", { description: (e as Error).message });
+    }
+  }
+
+  async function sendPasswordReset() {
+    if (!user?.email) return;
+    setSendingReset(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Password reset link sent", { description: user.email });
+    } catch (e) {
+      toast.error("Could not send reset email", { description: (e as Error).message });
+    } finally {
+      setSendingReset(false);
+    }
+  }
 
   return (
     <AppShell nav={USER_NAV} title="Settings" subtitle="Profile, preferences, security and data.">
@@ -26,11 +66,11 @@ function SettingsPage() {
           <div className="space-y-4">
             <div className="grid gap-1.5">
               <Label htmlFor="name">Full name</Label>
-              <Input id="name" defaultValue="Alex Rivera" />
+              <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" defaultValue="alex@ferron.app" />
+              <Input id="email" type="email" value={profile?.email ?? user?.email ?? ""} disabled />
             </div>
             <div className="grid gap-1.5">
               <Label>Base currency</Label>
@@ -39,22 +79,33 @@ function SettingsPage() {
                 Every account uses this currency. Change here (or during onboarding) — never per account.
               </p>
             </div>
-            <Button>Save changes</Button>
+            <LoadingButton
+              onClick={() => void saveProfile()}
+              loading={updateProfile.isPending}
+              loadingText="Saving…"
+            >
+              Save changes
+            </LoadingButton>
           </div>
         </SectionCard>
 
         <SectionCard title="Wallpaper">
-          {/* TODO(backend): seed wallpapers into Supabase `wallpapers` table + storage bucket. */}
+          {/* TODO(backend): seed wallpapers into the `wallpapers` table + storage bucket. */}
           <p className="text-sm text-muted-foreground">Pick a background for your Ferron workspace.</p>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {wallpapers.map((w) => (
               <button
                 key={w.id}
                 type="button"
-                onClick={() => setWallpaperId(w.id)}
+                onClick={() => {
+                  setWallpaperId(w.id);
+                  void updateProfile.mutateAsync({ wallpaper: w.id }).catch(() => {});
+                }}
                 className={cn(
                   "group relative aspect-video overflow-hidden rounded-lg border-2 transition-all",
-                  wallpaper.id === w.id ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/40",
+                  wallpaper.id === w.id
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-border hover:border-primary/40",
                 )}
                 aria-label={`Choose ${w.name}`}
               >
@@ -83,13 +134,22 @@ function SettingsPage() {
         </SectionCard>
         <SectionCard title="Security">
           <div className="space-y-4">
-            <PrefRow title="Two-factor authentication" desc="Recommended for shared accounts." defaultChecked />
+            <PrefRow title="Two-factor authentication" desc="Recommended for shared accounts." />
             <PrefRow title="Session on trusted devices" desc="Skip login on remembered devices for 30 days." />
-            <Button variant="outline">Change password</Button>
+            <LoadingButton
+              variant="outline"
+              loading={sendingReset}
+              loadingText="Sending…"
+              onClick={() => void sendPasswordReset()}
+            >
+              Change password
+            </LoadingButton>
           </div>
         </SectionCard>
         <SectionCard title="Data">
-          <p className="text-sm text-muted-foreground">Export or delete your data at any time. Your data belongs to you.</p>
+          <p className="text-sm text-muted-foreground">
+            Export or delete your data at any time. Your data belongs to you.
+          </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button variant="outline">Export CSV</Button>
             <Button variant="outline">Export JSON</Button>
