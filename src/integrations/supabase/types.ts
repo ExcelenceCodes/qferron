@@ -14,6 +14,91 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_details: {
+        Row: {
+          account_id: string
+          created_at: string
+          detail_kind: string
+          id: string
+          masked_hint: string | null
+          payload_ciphertext: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          detail_kind?: string
+          id?: string
+          masked_hint?: string | null
+          payload_ciphertext: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          detail_kind?: string
+          id?: string
+          masked_hint?: string | null
+          payload_ciphertext?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_details_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      account_join_requests: {
+        Row: {
+          account_id: string
+          created_at: string
+          id: string
+          message: string | null
+          requester_email: string | null
+          requester_id: string
+          requester_name: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requester_email?: string | null
+          requester_id: string
+          requester_name?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requester_email?: string | null
+          requester_id?: string
+          requester_name?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_join_requests_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       account_members: {
         Row: {
           account_id: string
@@ -65,6 +150,7 @@ export type Database = {
           is_shared: boolean
           name: string
           note: string | null
+          share_code: string
           type: Database["public"]["Enums"]["account_type"]
           updated_at: string
           user_id: string
@@ -78,6 +164,7 @@ export type Database = {
           is_shared?: boolean
           name: string
           note?: string | null
+          share_code?: string
           type?: Database["public"]["Enums"]["account_type"]
           updated_at?: string
           user_id: string
@@ -91,6 +178,7 @@ export type Database = {
           is_shared?: boolean
           name?: string
           note?: string | null
+          share_code?: string
           type?: Database["public"]["Enums"]["account_type"]
           updated_at?: string
           user_id?: string
@@ -256,6 +344,68 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "chat_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_threads: {
+        Row: {
+          created_at: string
+          id: string
+          persona: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          persona?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          persona?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       debt_payments: {
         Row: {
           amount: number
@@ -372,6 +522,101 @@ export type Database = {
           subject?: string
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      investment_contributions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          investment_id: string
+          kind: string
+          note: string | null
+          occurred_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          investment_id: string
+          kind?: string
+          note?: string | null
+          occurred_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          investment_id?: string
+          kind?: string
+          note?: string | null
+          occurred_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_contributions_investment_id_fkey"
+            columns: ["investment_id"]
+            isOneToOne: false
+            referencedRelation: "investments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investments: {
+        Row: {
+          created_at: string
+          currency: string
+          current_value: number
+          growth_rate: number
+          id: string
+          kind: Database["public"]["Enums"]["investment_kind"]
+          maturity_date: string | null
+          name: string
+          note: string | null
+          principal: number
+          provider: string | null
+          risk: string
+          started_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          current_value?: number
+          growth_rate?: number
+          id?: string
+          kind?: Database["public"]["Enums"]["investment_kind"]
+          maturity_date?: string | null
+          name: string
+          note?: string | null
+          principal?: number
+          provider?: string | null
+          risk?: string
+          started_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          current_value?: number
+          growth_rate?: number
+          id?: string
+          kind?: Database["public"]["Enums"]["investment_kind"]
+          maturity_date?: string | null
+          name?: string
+          note?: string | null
+          principal?: number
+          provider?: string | null
+          risk?: string
+          started_at?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -527,34 +772,55 @@ export type Database = {
       rules: {
         Row: {
           action_expr: string
+          action_type: string
+          action_value: string
+          condition_field: string
+          condition_value: string
           created_at: string
           enabled: boolean
           hits: number
           id: string
+          last_run_at: string | null
           match_expr: string
           name: string
+          operator: string
+          trigger_type: string
           updated_at: string
           user_id: string
         }
         Insert: {
-          action_expr: string
+          action_expr?: string
+          action_type?: string
+          action_value?: string
+          condition_field?: string
+          condition_value?: string
           created_at?: string
           enabled?: boolean
           hits?: number
           id?: string
-          match_expr: string
+          last_run_at?: string | null
+          match_expr?: string
           name: string
+          operator?: string
+          trigger_type?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           action_expr?: string
+          action_type?: string
+          action_value?: string
+          condition_field?: string
+          condition_value?: string
           created_at?: string
           enabled?: boolean
           hits?: number
           id?: string
+          last_run_at?: string | null
           match_expr?: string
           name?: string
+          operator?: string
+          trigger_type?: string
           updated_at?: string
           user_id?: string
         }
@@ -673,6 +939,8 @@ export type Database = {
     }
     Functions: {
       can_access_account: { Args: { _account_id: string }; Returns: boolean }
+      can_write_account: { Args: { _account_id: string }; Returns: boolean }
+      gen_share_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -681,6 +949,18 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      lookup_account_by_code: {
+        Args: { _code: string }
+        Returns: {
+          account_id: string
+          currency: string
+          is_shared: boolean
+          member_count: number
+          name: string
+          owner_name: string
+          type: Database["public"]["Enums"]["account_type"]
+        }[]
+      }
     }
     Enums: {
       account_plan: "free" | "pro" | "team"
@@ -691,6 +971,15 @@ export type Database = {
       debt_kind: "loan" | "credit"
       debt_status: "active" | "settled" | "overdue"
       feedback_status: "new" | "in_review" | "closed"
+      investment_kind:
+        | "stocks"
+        | "bonds"
+        | "mutual_fund"
+        | "real_estate"
+        | "business"
+        | "crypto"
+        | "savings_plan"
+        | "other"
       notification_category: "money" | "shared" | "ai" | "system"
       tx_direction: "in" | "out"
     }
@@ -828,6 +1117,16 @@ export const Constants = {
       debt_kind: ["loan", "credit"],
       debt_status: ["active", "settled", "overdue"],
       feedback_status: ["new", "in_review", "closed"],
+      investment_kind: [
+        "stocks",
+        "bonds",
+        "mutual_fund",
+        "real_estate",
+        "business",
+        "crypto",
+        "savings_plan",
+        "other",
+      ],
       notification_category: ["money", "shared", "ai", "system"],
       tx_direction: ["in", "out"],
     },
