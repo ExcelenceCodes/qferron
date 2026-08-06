@@ -164,7 +164,7 @@ export type Database = {
           is_shared?: boolean
           name: string
           note?: string | null
-          share_code: string
+          share_code?: string
           type?: Database["public"]["Enums"]["account_type"]
           updated_at?: string
           user_id: string
