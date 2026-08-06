@@ -16,6 +16,7 @@ import {
   Users,
   Wallet,
   ChartBar,
+  TrendingUp,
 } from "lucide-react";
 import type { NavItem } from "@/components/app/app-shell";
 
@@ -25,6 +26,7 @@ export const USER_NAV: NavItem[] = [
   { to: "/dashboard/transactions", label: "Transactions", icon: Repeat2 },
   { to: "/dashboard/rules", label: "Automations", icon: Sparkles },
   { to: "/dashboard/assets", label: "Assets", icon: Coins },
+  { to: "/dashboard/investments", label: "Investments", icon: TrendingUp },
   { to: "/dashboard/debts", label: "Debts & Credits", icon: Scale },
   { to: "/dashboard/reports", label: "Reports", icon: ChartBar },
   { to: "/dashboard/shared", label: "Shared", icon: Share2 },
