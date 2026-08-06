@@ -167,30 +167,30 @@ export function GrowthChart({ currency, months = 12, ...data }: GrowthChartProps
               <AreaChart data={points} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
                 <defs>
                   <linearGradient id="nwFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                 <XAxis
                   dataKey="label"
                   tickLine={false}
                   axisLine={false}
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 />
                 <YAxis
                   tickFormatter={axis}
                   tickLine={false}
                   axisLine={false}
                   width={64}
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 />
                 <RTooltip content={<ChartTooltip currency={currency} />} />
                 <Area
                   type="monotone"
                   dataKey="netWorth"
                   name="Net worth"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--primary)"
                   strokeWidth={2.5}
                   fill="url(#nwFill)"
                 />
@@ -203,25 +203,25 @@ export function GrowthChart({ currency, months = 12, ...data }: GrowthChartProps
           <div className="h-[260px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={points} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                 <XAxis
                   dataKey="label"
                   tickLine={false}
                   axisLine={false}
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 />
                 <YAxis
                   tickFormatter={axis}
                   tickLine={false}
                   axisLine={false}
                   width={64}
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                 />
                 <RTooltip content={<ChartTooltip currency={currency} />} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="inflow" name="In" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="outflow" name="Out" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                <Line type="monotone" dataKey="net" name="Net" stroke="hsl(var(--foreground))" />
+                <Bar dataKey="inflow" name="In" fill="var(--success)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="outflow" name="Out" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                <Line type="monotone" dataKey="net" name="Net" stroke="var(--foreground)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
