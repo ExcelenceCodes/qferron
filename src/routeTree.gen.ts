@@ -49,6 +49,7 @@ import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminAiSettingsRouteImport } from './routes/admin.ai-settings'
 import { Route as AdminAccountsRouteImport } from './routes/admin.accounts'
 import { Route as DashboardChatIndexRouteImport } from './routes/dashboard.chat.index'
+import { Route as DashboardChatThreadIdRouteImport } from './routes/dashboard.chat.$threadId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -250,6 +251,11 @@ const DashboardChatIndexRoute = DashboardChatIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardChatRoute,
 } as any)
+const DashboardChatThreadIdRoute = DashboardChatThreadIdRouteImport.update({
+  id: '/$threadId',
+  path: '/$threadId',
+  getParentRoute: () => DashboardChatRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -291,6 +297,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/chat/$threadId': typeof DashboardChatThreadIdRoute
   '/dashboard/chat/': typeof DashboardChatIndexRoute
 }
 export interface FileRoutesByTo {
@@ -330,6 +337,7 @@ export interface FileRoutesByTo {
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/chat/$threadId': typeof DashboardChatThreadIdRoute
   '/dashboard/chat': typeof DashboardChatIndexRoute
 }
 export interface FileRoutesById {
@@ -373,6 +381,7 @@ export interface FileRoutesById {
   '/dashboard/transactions': typeof DashboardTransactionsRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/chat/$threadId': typeof DashboardChatThreadIdRoute
   '/dashboard/chat/': typeof DashboardChatIndexRoute
 }
 export interface FileRouteTypes {
@@ -417,6 +426,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/admin/'
     | '/dashboard/'
+    | '/dashboard/chat/$threadId'
     | '/dashboard/chat/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/admin'
     | '/dashboard'
+    | '/dashboard/chat/$threadId'
     | '/dashboard/chat'
   id:
     | '__root__'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/admin/'
     | '/dashboard/'
+    | '/dashboard/chat/$threadId'
     | '/dashboard/chat/'
   fileRoutesById: FileRoutesById
 }
@@ -802,6 +814,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardChatIndexRouteImport
       parentRoute: typeof DashboardChatRoute
     }
+    '/dashboard/chat/$threadId': {
+      id: '/dashboard/chat/$threadId'
+      path: '/$threadId'
+      fullPath: '/dashboard/chat/$threadId'
+      preLoaderRoute: typeof DashboardChatThreadIdRouteImport
+      parentRoute: typeof DashboardChatRoute
+    }
   }
 }
 
@@ -844,10 +863,12 @@ const BlogRouteChildren: BlogRouteChildren = {
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface DashboardChatRouteChildren {
+  DashboardChatThreadIdRoute: typeof DashboardChatThreadIdRoute
   DashboardChatIndexRoute: typeof DashboardChatIndexRoute
 }
 
 const DashboardChatRouteChildren: DashboardChatRouteChildren = {
+  DashboardChatThreadIdRoute: DashboardChatThreadIdRoute,
   DashboardChatIndexRoute: DashboardChatIndexRoute,
 }
 

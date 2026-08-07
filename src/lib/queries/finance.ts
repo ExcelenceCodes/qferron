@@ -176,6 +176,8 @@ export interface AssetInput {
   currency: string;
   acquired_at?: string | null;
   note?: string | null;
+  /** Money rotation: the Ferron account the purchase is paid from. */
+  funding_account_id?: string | null;
 }
 
 export function useCreateAsset() {
@@ -250,6 +252,8 @@ export interface DebtInput {
   interest_rate?: number;
   due_date?: string | null;
   note?: string | null;
+  /** Money rotation: account the loan lands in / the lent money leaves. */
+  funding_account_id?: string | null;
 }
 
 export function useCreateDebt() {
@@ -292,7 +296,13 @@ export function useLogDebtPayment() {
   const { user } = useAuth();
   const invalidate = useFinanceInvalidate();
   return useMutation({
-    mutationFn: async (input: { debt_id: string; amount: number; paid_at: string; note?: string | null }) =>
+    mutationFn: async (input: {
+      debt_id: string;
+      amount: number;
+      paid_at: string;
+      note?: string | null;
+      funding_account_id?: string | null;
+    }) =>
       must(
         await supabase
           .from("debt_payments")
