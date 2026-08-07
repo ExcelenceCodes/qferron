@@ -111,6 +111,8 @@ export function useLogContribution() {
       kind: string;
       occurred_at: string;
       note?: string | null;
+      /** Money rotation: account the contribution moves through. */
+      account_id?: string | null;
     }) =>
       must(
         await supabase
