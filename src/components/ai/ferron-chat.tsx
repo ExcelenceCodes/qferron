@@ -107,6 +107,7 @@ export function FerronChat({
           title: clean.slice(0, 60),
           persona: persona.name,
         });
+        if (!created) throw new Error("Could not start a conversation");
         tid = created.id;
         onThreadCreated?.(created.id);
       }
@@ -115,7 +116,7 @@ export function FerronChat({
       setLocal((l) => [...l, { role: "assistant", content: res.reply }]);
 
       await append.mutateAsync({
-        thread_id: tid,
+        thread_id: tid!,
         messages: [
           { role: "user", content: clean },
           { role: "assistant", content: res.reply },
@@ -214,7 +215,7 @@ export function FerronChat({
               {pending && (
                 <div className="flex items-center gap-3 pl-1">
                   <img src={persona.img} alt="" className="h-7 w-7 rounded-full object-cover" />
-                  <Shimmer className="text-sm">{persona.name} is thinking…</Shimmer>
+                  <Shimmer className="text-sm">{`${persona.name} is thinking…`}</Shimmer>
                 </div>
               )}
             </div>
