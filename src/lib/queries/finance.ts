@@ -253,7 +253,7 @@ export interface DebtInput {
   due_date?: string | null;
   note?: string | null;
   /** Money rotation: account the loan lands in / the lent money leaves. */
-  funding_account_id?: string | null;
+  account_id?: string | null;
 }
 
 export function useCreateDebt() {
@@ -301,7 +301,7 @@ export function useLogDebtPayment() {
       amount: number;
       paid_at: string;
       note?: string | null;
-      funding_account_id?: string | null;
+      account_id?: string | null;
     }) =>
       must(
         await supabase
