@@ -232,6 +232,8 @@ export type Database = {
           acquired_at: string | null
           created_at: string
           currency: string
+          funding_account_id: string | null
+          funding_tx_id: string | null
           id: string
           kind: Database["public"]["Enums"]["asset_kind"]
           name: string
@@ -244,6 +246,8 @@ export type Database = {
           acquired_at?: string | null
           created_at?: string
           currency?: string
+          funding_account_id?: string | null
+          funding_tx_id?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["asset_kind"]
           name: string
@@ -256,6 +260,8 @@ export type Database = {
           acquired_at?: string | null
           created_at?: string
           currency?: string
+          funding_account_id?: string | null
+          funding_tx_id?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["asset_kind"]
           name?: string
@@ -264,7 +270,22 @@ export type Database = {
           user_id?: string
           value?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "assets_funding_account_id_fkey"
+            columns: ["funding_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_funding_tx_id_fkey"
+            columns: ["funding_tx_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       audit_log: {
         Row: {
@@ -408,33 +429,46 @@ export type Database = {
       }
       debt_payments: {
         Row: {
+          account_id: string | null
           amount: number
           created_at: string
           debt_id: string
           id: string
           note: string | null
           paid_at: string
+          tx_id: string | null
           user_id: string
         }
         Insert: {
+          account_id?: string | null
           amount: number
           created_at?: string
           debt_id: string
           id?: string
           note?: string | null
           paid_at?: string
+          tx_id?: string | null
           user_id: string
         }
         Update: {
+          account_id?: string | null
           amount?: number
           created_at?: string
           debt_id?: string
           id?: string
           note?: string | null
           paid_at?: string
+          tx_id?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "debt_payments_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "debt_payments_debt_id_fkey"
             columns: ["debt_id"]
@@ -442,10 +476,18 @@ export type Database = {
             referencedRelation: "debts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "debt_payments_tx_id_fkey"
+            columns: ["tx_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
         ]
       }
       debts: {
         Row: {
+          account_id: string | null
           counterparty: string
           created_at: string
           currency: string
@@ -454,6 +496,7 @@ export type Database = {
           interest_rate: number
           kind: Database["public"]["Enums"]["debt_kind"]
           note: string | null
+          origin_tx_id: string | null
           outstanding: number
           principal: number
           status: Database["public"]["Enums"]["debt_status"]
@@ -461,6 +504,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          account_id?: string | null
           counterparty: string
           created_at?: string
           currency?: string
@@ -469,6 +513,7 @@ export type Database = {
           interest_rate?: number
           kind?: Database["public"]["Enums"]["debt_kind"]
           note?: string | null
+          origin_tx_id?: string | null
           outstanding?: number
           principal?: number
           status?: Database["public"]["Enums"]["debt_status"]
@@ -476,6 +521,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          account_id?: string | null
           counterparty?: string
           created_at?: string
           currency?: string
@@ -484,13 +530,29 @@ export type Database = {
           interest_rate?: number
           kind?: Database["public"]["Enums"]["debt_kind"]
           note?: string | null
+          origin_tx_id?: string | null
           outstanding?: number
           principal?: number
           status?: Database["public"]["Enums"]["debt_status"]
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "debts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "debts_origin_tx_id_fkey"
+            columns: ["origin_tx_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feedback: {
         Row: {
@@ -527,6 +589,7 @@ export type Database = {
       }
       investment_contributions: {
         Row: {
+          account_id: string | null
           amount: number
           created_at: string
           id: string
@@ -534,9 +597,11 @@ export type Database = {
           kind: string
           note: string | null
           occurred_at: string
+          tx_id: string | null
           user_id: string
         }
         Insert: {
+          account_id?: string | null
           amount: number
           created_at?: string
           id?: string
@@ -544,9 +609,11 @@ export type Database = {
           kind?: string
           note?: string | null
           occurred_at?: string
+          tx_id?: string | null
           user_id: string
         }
         Update: {
+          account_id?: string | null
           amount?: number
           created_at?: string
           id?: string
@@ -554,14 +621,29 @@ export type Database = {
           kind?: string
           note?: string | null
           occurred_at?: string
+          tx_id?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "investment_contributions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "investment_contributions_investment_id_fkey"
             columns: ["investment_id"]
             isOneToOne: false
             referencedRelation: "investments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "investment_contributions_tx_id_fkey"
+            columns: ["tx_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
             referencedColumns: ["id"]
           },
         ]
