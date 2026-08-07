@@ -10,6 +10,7 @@ import { WallpaperBackdrop } from "@/components/wallpaper-provider";
 import { NOTIFICATIONS } from "@/lib/mock/notifications";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { ChatDock } from "@/components/ai/chat-dock";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -143,6 +144,8 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
         </header>
         <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">{children}</div>
       </div>
+
+      {!pathname.startsWith("/admin") && !pathname.startsWith("/dashboard/chat") && <ChatDock />}
 
       {open && (
         <div
