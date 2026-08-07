@@ -36,6 +36,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { SidePanel } from "@/components/ui/side-panel";
+import { MoneySourceSelect } from "@/components/app/account-picker";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { useBaseCurrency } from "@/lib/base-currency";
 import {
@@ -185,6 +186,7 @@ function DebtPanel({ debt, onClose }: { debt: DebtRow | null; onClose: () => voi
   const [payOpen, setPayOpen] = useState(false);
   const [payAmount, setPayAmount] = useState("");
   const [payDate, setPayDate] = useState(new Date().toISOString().slice(0, 10));
+  const [payAccount, setPayAccount] = useState("");
 
   if (!debt) return null;
 
@@ -514,6 +516,17 @@ function DebtDialog({
               />
             </div>
           </div>
+          {!editing && (
+            <MoneySourceSelect
+              id="debt-account"
+              direction={kind === "loan" ? "in" : "out"}
+              amount={Number(principal) || 0}
+              value={accountId}
+              onChange={setAccountId}
+              label={kind === "loan" ? "Borrowed money lands in" : "Lend the money from"}
+              hint="Money rotation: a matching transaction is created automatically."
+            />
+          )}
           <div className="grid gap-1.5">
             <Label htmlFor="debt-note">Note (optional)</Label>
             <Textarea
