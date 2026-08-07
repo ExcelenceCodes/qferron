@@ -201,14 +201,24 @@ function DebtPanel({ debt, onClose }: { debt: DebtRow | null; onClose: () => voi
 
   async function submitPayment(e: React.FormEvent) {
     e.preventDefault();
+    if (!payAccount) {
+      toast.error(
+        debt!.kind === "loan"
+          ? "Choose the account you are paying from"
+          : "Choose the account receiving the money",
+      );
+      return;
+    }
     try {
       await logPayment.mutateAsync({
         debt_id: debt!.id,
         amount: Number(payAmount),
         paid_at: payDate,
+        account_id: payAccount,
       });
       toast.success("Payment logged", { description: "Outstanding balance updated." });
       setPayAmount("");
+      setPayAccount("");
       setPayOpen(false);
     } catch (err) {
       toast.error("Could not log payment", { description: (err as Error).message });
@@ -311,6 +321,14 @@ function DebtPanel({ debt, onClose }: { debt: DebtRow | null; onClose: () => voi
                 required
               />
             </div>
+            <MoneySourceSelect
+              id="pay-account"
+              direction={debt.kind === "loan" ? "out" : "in"}
+              amount={Number(payAmount) || 0}
+              value={payAccount}
+              onChange={setPayAccount}
+              label={debt.kind === "loan" ? "Pay from account" : "Receive into account"}
+            />
             <div className="grid gap-1.5">
               <Label htmlFor="pay-date">Date</Label>
               <Input
@@ -379,6 +397,7 @@ function DebtDialog({
   const [interest, setInterest] = useState(debt ? String(debt.interest_rate) : "0");
   const [dueDate, setDueDate] = useState(debt?.due_date ?? "");
   const [note, setNote] = useState(debt?.note ?? "");
+  const [accountId, setAccountId] = useState(debt?.account_id ?? "");
   const pending = create.isPending || update.isPending;
 
   async function submit(e: React.FormEvent) {
@@ -397,7 +416,16 @@ function DebtDialog({
         });
         toast.success("Record updated");
       } else {
+        if (!accountId) {
+          toast.error(
+            kind === "loan"
+              ? "Choose the account receiving the borrowed money"
+              : "Choose the account the money is lent from",
+          );
+          return;
+        }
         await create.mutateAsync({
+          account_id: accountId,
           counterparty,
           kind,
           principal: amount,
