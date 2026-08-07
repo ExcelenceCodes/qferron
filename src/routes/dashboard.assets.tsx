@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SidePanel } from "@/components/ui/side-panel";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { MoneySourceSelect } from "@/components/app/account-picker";
 import { useBaseCurrency } from "@/lib/base-currency";
 import {
   useAssets,
@@ -257,6 +258,7 @@ function AssetDialog({
   const [value, setValue] = useState(asset ? String(asset.value) : "");
   const [acquiredAt, setAcquiredAt] = useState(asset?.acquired_at ?? "");
   const [note, setNote] = useState(asset?.note ?? "");
+  const [fundingId, setFundingId] = useState(asset?.funding_account_id ?? "");
   const pending = create.isPending || update.isPending;
 
   async function submit(e: React.FormEvent) {
@@ -270,11 +272,15 @@ function AssetDialog({
       note: note || null,
     };
     try {
+      if (!editing && !fundingId) {
+        toast.error("Choose the account this asset is paid from");
+        return;
+      }
       if (editing) {
         await update.mutateAsync({ id: asset!.id, ...payload });
         toast.success("Asset updated");
       } else {
-        await create.mutateAsync(payload);
+        await create.mutateAsync({ ...payload, funding_account_id: fundingId });
         toast.success("Asset registered");
         setName("");
         setValue("");
@@ -351,6 +357,17 @@ function AssetDialog({
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
+          {!editing && (
+            <MoneySourceSelect
+              id="asset-funding"
+              direction="out"
+              amount={Number(value) || 0}
+              value={fundingId}
+              onChange={setFundingId}
+              label="Paid from"
+              hint="Money rotation: the purchase leaves this account as a transaction."
+            />
+          )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
