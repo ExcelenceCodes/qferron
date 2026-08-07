@@ -103,10 +103,10 @@ export function FerronChat({
     let tid = threadId;
     try {
       if (!tid) {
-        const created = await createThread.mutateAsync({
+        const created = (await createThread.mutateAsync({
           title: clean.slice(0, 60),
           persona: persona.name,
-        });
+        })) as { id: string } | null;
         if (!created) throw new Error("Could not start a conversation");
         tid = created.id;
         onThreadCreated?.(created.id);
