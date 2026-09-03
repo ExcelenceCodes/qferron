@@ -60,7 +60,7 @@ function DashboardHome() {
         <StatCard
           label="Net worth"
           value={formatMoney(netWorth, currency)}
-          hint={`${accounts?.length ?? 0} accounts · ${assets?.length ?? 0} assets`}
+          hint={`incl. ${formatMoney(investValue, currency)} invested · ${investProfit >= 0 ? "+" : ""}${formatMoney(investProfit, currency)} profit`}
           icon={Wallet}
         />
         <StatCard
