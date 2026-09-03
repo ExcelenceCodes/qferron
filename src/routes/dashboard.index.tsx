@@ -5,6 +5,7 @@ import { EmptyState, ListSkeleton } from "@/components/app/empty-state";
 import { USER_NAV } from "@/lib/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import { useAccounts, useAssets, useDebts, useTransactions } from "@/lib/queries/finance";
+import { useInvestments } from "@/lib/queries/investments";
 import { useBaseCurrency } from "@/lib/base-currency";
 import { formatDate, formatMoney } from "@/lib/format";
 
@@ -19,6 +20,7 @@ function DashboardHome() {
   const { data: transactions, isLoading } = useTransactions();
   const { data: assets } = useAssets();
   const { data: debts } = useDebts();
+  const { data: investments } = useInvestments();
 
   const monthStart = new Date();
   monthStart.setDate(1);
@@ -26,10 +28,15 @@ function DashboardHome() {
 
   const balance = (accounts ?? []).reduce((s, a) => s + Number(a.balance), 0);
   const assetValue = (assets ?? []).reduce((s, a) => s + Number(a.value), 0);
+  const investValue = (investments ?? []).reduce((s, i) => s + Number(i.current_value), 0);
+  const investProfit = (investments ?? []).reduce(
+    (s, i) => s + Number(i.current_value) - Number(i.principal),
+    0,
+  );
   const owed = (debts ?? [])
     .filter((d) => d.kind === "loan" && d.status !== "settled")
     .reduce((s, d) => s + Number(d.outstanding), 0);
-  const netWorth = balance + assetValue - owed;
+  const netWorth = balance + assetValue + investValue - owed;
 
   const thisMonth = (transactions ?? []).filter((t) => t.occurred_at >= monthKey);
   const inflow = thisMonth.filter((t) => t.direction === "in").reduce((s, t) => s + Number(t.amount), 0);
@@ -53,7 +60,7 @@ function DashboardHome() {
         <StatCard
           label="Net worth"
           value={formatMoney(netWorth, currency)}
-          hint={`${accounts?.length ?? 0} accounts · ${assets?.length ?? 0} assets`}
+          hint={`incl. ${formatMoney(investValue, currency)} invested · ${investProfit >= 0 ? "+" : ""}${formatMoney(investProfit, currency)} profit`}
           icon={Wallet}
         />
         <StatCard
