@@ -5,6 +5,7 @@ import { EmptyState, ListSkeleton } from "@/components/app/empty-state";
 import { USER_NAV } from "@/lib/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import { useAccounts, useAssets, useDebts, useTransactions } from "@/lib/queries/finance";
+import { useInvestments } from "@/lib/queries/investments";
 import { useBaseCurrency } from "@/lib/base-currency";
 import { formatDate, formatMoney } from "@/lib/format";
 
