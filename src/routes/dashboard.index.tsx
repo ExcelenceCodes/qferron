@@ -27,10 +27,15 @@ function DashboardHome() {
 
   const balance = (accounts ?? []).reduce((s, a) => s + Number(a.balance), 0);
   const assetValue = (assets ?? []).reduce((s, a) => s + Number(a.value), 0);
+  const investValue = (investments ?? []).reduce((s, i) => s + Number(i.current_value), 0);
+  const investProfit = (investments ?? []).reduce(
+    (s, i) => s + Number(i.current_value) - Number(i.principal),
+    0,
+  );
   const owed = (debts ?? [])
     .filter((d) => d.kind === "loan" && d.status !== "settled")
     .reduce((s, d) => s + Number(d.outstanding), 0);
-  const netWorth = balance + assetValue - owed;
+  const netWorth = balance + assetValue + investValue - owed;
 
   const thisMonth = (transactions ?? []).filter((t) => t.occurred_at >= monthKey);
   const inflow = thisMonth.filter((t) => t.direction === "in").reduce((s, t) => s + Number(t.amount), 0);
