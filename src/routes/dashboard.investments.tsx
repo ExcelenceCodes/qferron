@@ -504,6 +504,7 @@ function InvestmentDialog({
           risk,
           note: note || null,
         });
+        if (!created) return;
         if (value > 0) {
           await logContribution.mutateAsync({
             investment_id: created.id,
