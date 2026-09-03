@@ -19,6 +19,7 @@ function DashboardHome() {
   const { data: transactions, isLoading } = useTransactions();
   const { data: assets } = useAssets();
   const { data: debts } = useDebts();
+  const { data: investments } = useInvestments();
 
   const monthStart = new Date();
   monthStart.setDate(1);

@@ -34,6 +34,7 @@ import { Route as DashboardRulesRouteImport } from './routes/dashboard.rules'
 import { Route as DashboardReportsRouteImport } from './routes/dashboard.reports'
 import { Route as DashboardReferralsRouteImport } from './routes/dashboard.referrals'
 import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
+import { Route as DashboardInvestmentsRouteImport } from './routes/dashboard.investments'
 import { Route as DashboardDebtsRouteImport } from './routes/dashboard.debts'
 import { Route as DashboardChatRouteImport } from './routes/dashboard.chat'
 import { Route as DashboardAssetsRouteImport } from './routes/dashboard.assets'
@@ -176,6 +177,11 @@ const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardInvestmentsRoute = DashboardInvestmentsRouteImport.update({
+  id: '/investments',
+  path: '/investments',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardDebtsRoute = DashboardDebtsRouteImport.update({
   id: '/debts',
   path: '/debts',
@@ -288,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/assets': typeof DashboardAssetsRoute
   '/dashboard/chat': typeof DashboardChatRouteWithChildren
   '/dashboard/debts': typeof DashboardDebtsRoute
+  '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
@@ -328,6 +335,7 @@ export interface FileRoutesByTo {
   '/dashboard/accounts': typeof DashboardAccountsRoute
   '/dashboard/assets': typeof DashboardAssetsRoute
   '/dashboard/debts': typeof DashboardDebtsRoute
+  '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/dashboard/assets': typeof DashboardAssetsRoute
   '/dashboard/chat': typeof DashboardChatRouteWithChildren
   '/dashboard/debts': typeof DashboardDebtsRoute
+  '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/referrals': typeof DashboardReferralsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
@@ -417,6 +426,7 @@ export interface FileRouteTypes {
     | '/dashboard/assets'
     | '/dashboard/chat'
     | '/dashboard/debts'
+    | '/dashboard/investments'
     | '/dashboard/notifications'
     | '/dashboard/referrals'
     | '/dashboard/reports'
@@ -457,6 +467,7 @@ export interface FileRouteTypes {
     | '/dashboard/accounts'
     | '/dashboard/assets'
     | '/dashboard/debts'
+    | '/dashboard/investments'
     | '/dashboard/notifications'
     | '/dashboard/referrals'
     | '/dashboard/reports'
@@ -500,6 +511,7 @@ export interface FileRouteTypes {
     | '/dashboard/assets'
     | '/dashboard/chat'
     | '/dashboard/debts'
+    | '/dashboard/investments'
     | '/dashboard/notifications'
     | '/dashboard/referrals'
     | '/dashboard/reports'
@@ -709,6 +721,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardNotificationsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/investments': {
+      id: '/dashboard/investments'
+      path: '/investments'
+      fullPath: '/dashboard/investments'
+      preLoaderRoute: typeof DashboardInvestmentsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/debts': {
       id: '/dashboard/debts'
       path: '/debts'
@@ -881,6 +900,7 @@ interface DashboardRouteChildren {
   DashboardAssetsRoute: typeof DashboardAssetsRoute
   DashboardChatRoute: typeof DashboardChatRouteWithChildren
   DashboardDebtsRoute: typeof DashboardDebtsRoute
+  DashboardInvestmentsRoute: typeof DashboardInvestmentsRoute
   DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardReferralsRoute: typeof DashboardReferralsRoute
   DashboardReportsRoute: typeof DashboardReportsRoute
@@ -896,6 +916,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAssetsRoute: DashboardAssetsRoute,
   DashboardChatRoute: DashboardChatRouteWithChildren,
   DashboardDebtsRoute: DashboardDebtsRoute,
+  DashboardInvestmentsRoute: DashboardInvestmentsRoute,
   DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardReferralsRoute: DashboardReferralsRoute,
   DashboardReportsRoute: DashboardReportsRoute,
