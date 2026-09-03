@@ -1,13 +1,46 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDownRight, ArrowUpRight, Download, Mail, PieChart, TrendingUp } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Coins,
+  Download,
+  LineChart as LineChartIcon,
+  Mail,
+  PieChart,
+  Scale,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart as RePieChart,
+  ResponsiveContainer,
+  Sankey,
+  Tooltip,
+  Tooltip as ReTooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { AppShell, SectionCard, StatCard } from "@/components/app/app-shell";
 import { EmptyState, ListSkeleton } from "@/components/app/empty-state";
 import { USER_NAV } from "@/lib/dashboard-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -20,15 +53,39 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { useAuth } from "@/lib/auth";
 import { useBaseCurrency } from "@/lib/base-currency";
 import { formatMoney } from "@/lib/format";
-import { useTransactions } from "@/lib/queries/finance";
+import { useAccounts, useAssets, useDebts, useTransactions } from "@/lib/queries/finance";
+import { useInvestments } from "@/lib/queries/investments";
 import { useCreateNotification } from "@/lib/queries/platform";
 
 export const Route = createFileRoute("/dashboard/reports")({
   head: () => ({
-    meta: [{ title: "Reports — Ferron" }, { name: "robots", content: "noindex" }],
+    meta: [
+      { title: "Reports — Ferron" },
+      { name: "description", content: "Money flow, categories and net worth at a glance." },
+      { name: "robots", content: "noindex" },
+    ],
   }),
   component: ReportsPage,
 });
+
+const RANGES = [
+  { value: "30", label: "Last 30 days" },
+  { value: "90", label: "Last 90 days" },
+  { value: "180", label: "Last 6 months" },
+  { value: "365", label: "Last 12 months" },
+  { value: "all", label: "All time" },
+] as const;
+
+const COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--secondary))",
+  "#f59e0b",
+  "#0ea5e9",
+  "#22c55e",
+  "#a855f7",
+  "#ef4444",
+  "#14b8a6",
+];
 
 function monthKey(d: string) {
   return d.slice(0, 7);
@@ -36,55 +93,94 @@ function monthKey(d: string) {
 
 function ReportsPage() {
   const { data: txs, isLoading } = useTransactions();
+  const { data: accounts } = useAccounts();
+  const { data: assets } = useAssets();
+  const { data: debts } = useDebts();
+  const { data: investments } = useInvestments();
   const { currency } = useBaseCurrency();
   const [mailOpen, setMailOpen] = useState(false);
+  const [range, setRange] = useState<string>("90");
+  const [accountId, setAccountId] = useState<string>("all");
 
-  const rows = useMemo(() => txs ?? [], [txs]);
   const thisMonth = new Date().toISOString().slice(0, 7);
 
-  const report = useMemo(() => {
-    const current = rows.filter((t) => monthKey(t.occurred_at) === thisMonth);
-    const spend = current
-      .filter((t) => t.direction === "out")
-      .reduce((s, t) => s + Number(t.amount), 0);
-    const income = current
-      .filter((t) => t.direction === "in")
-      .reduce((s, t) => s + Number(t.amount), 0);
-
-    const prevDate = new Date();
-    prevDate.setMonth(prevDate.getMonth() - 1);
-    const prevKey = prevDate.toISOString().slice(0, 7);
-    const prevSpend = rows
-      .filter((t) => monthKey(t.occurred_at) === prevKey && t.direction === "out")
-      .reduce((s, t) => s + Number(t.amount), 0);
-
-    const byCategory = new Map<string, number>();
-    for (const t of current) {
-      if (t.direction !== "out") continue;
-      byCategory.set(t.category, (byCategory.get(t.category) ?? 0) + Number(t.amount));
+  const rows = useMemo(() => {
+    let list = txs ?? [];
+    if (accountId !== "all") list = list.filter((t) => t.account_id === accountId);
+    if (range !== "all") {
+      const from = new Date();
+      from.setDate(from.getDate() - Number(range));
+      const key = from.toISOString().slice(0, 10);
+      list = list.filter((t) => t.occurred_at >= key);
     }
-    const cats = [...byCategory.entries()]
-      .map(([name, amount]) => ({ name, amount, pct: spend > 0 ? (amount / spend) * 100 : 0 }))
-      .sort((a, b) => b.amount - a.amount);
+    return list;
+  }, [txs, accountId, range]);
 
-    // last 7 months cash flow (net)
-    const months: { key: string; net: number; out: number }[] = [];
-    for (let i = 6; i >= 0; i--) {
+  const report = useMemo(() => {
+    const spend = rows.filter((t) => t.direction === "out").reduce((s, t) => s + Number(t.amount), 0);
+    const income = rows.filter((t) => t.direction === "in").reduce((s, t) => s + Number(t.amount), 0);
+
+    const group = (dir: "in" | "out") => {
+      const m = new Map<string, number>();
+      for (const t of rows) {
+        if (t.direction !== dir) continue;
+        m.set(t.category, (m.get(t.category) ?? 0) + Number(t.amount));
+      }
+      const total = dir === "out" ? spend : income;
+      return [...m.entries()]
+        .map(([name, amount]) => ({ name, amount, pct: total > 0 ? (amount / total) * 100 : 0 }))
+        .sort((a, b) => b.amount - a.amount);
+    };
+
+    const outCats = group("out");
+    const inCats = group("in");
+
+    const months: { key: string; in: number; out: number; net: number }[] = [];
+    const span = range === "all" ? 12 : Math.max(Math.ceil(Number(range) / 30), 2);
+    for (let i = span - 1; i >= 0; i--) {
       const d = new Date();
       d.setMonth(d.getMonth() - i);
       const key = d.toISOString().slice(0, 7);
       const m = rows.filter((t) => monthKey(t.occurred_at) === key);
-      months.push({
-        key,
-        net: m.reduce((s, t) => s + (t.direction === "in" ? 1 : -1) * Number(t.amount), 0),
-        out: m.filter((t) => t.direction === "out").reduce((s, t) => s + Number(t.amount), 0),
-      });
+      const mi = m.filter((t) => t.direction === "in").reduce((s, t) => s + Number(t.amount), 0);
+      const mo = m.filter((t) => t.direction === "out").reduce((s, t) => s + Number(t.amount), 0);
+      months.push({ key: key.slice(2), in: mi, out: mo, net: mi - mo });
     }
 
     const savingsRate = income > 0 ? ((income - spend) / income) * 100 : 0;
-    const delta = prevSpend > 0 ? ((spend - prevSpend) / prevSpend) * 100 : 0;
-    return { spend, income, cats, months, savingsRate, delta, count: current.length };
-  }, [rows, thisMonth]);
+    return { spend, income, outCats, inCats, months, savingsRate, count: rows.length };
+  }, [rows, range]);
+
+  const sankey = useMemo(() => {
+    const inTop = report.inCats.slice(0, 6);
+    const outTop = report.outCats.slice(0, 8);
+    if (inTop.length === 0 && outTop.length === 0) return null;
+    const hub = { name: accountId === "all" ? "All accounts" : accounts?.find((a) => a.id === accountId)?.name ?? "Account" };
+    const nodes = [...inTop.map((c) => ({ name: c.name })), hub, ...outTop.map((c) => ({ name: c.name }))];
+    const hubIndex = inTop.length;
+    const links = [
+      ...inTop.map((c, i) => ({ source: i, target: hubIndex, value: Math.max(c.amount, 0.01) })),
+      ...outTop.map((c, i) => ({
+        source: hubIndex,
+        target: hubIndex + 1 + i,
+        value: Math.max(c.amount, 0.01),
+      })),
+    ];
+    if (links.length === 0) return null;
+    return { nodes, links };
+  }, [report.inCats, report.outCats, accountId, accounts]);
+
+  const cash = (accounts ?? []).reduce((s, a) => s + Number(a.balance), 0);
+  const assetValue = (assets ?? []).reduce((s, a) => s + Number(a.value), 0);
+  const investValue = (investments ?? []).reduce((s, i) => s + Number(i.current_value), 0);
+  const investProfit = (investments ?? []).reduce(
+    (s, i) => s + Number(i.current_value) - Number(i.principal),
+    0,
+  );
+  const owed = (debts ?? [])
+    .filter((d) => d.kind === "loan" && d.status !== "settled")
+    .reduce((s, d) => s + Number(d.outstanding), 0);
+  const netWorth = cash + assetValue + investValue - owed;
 
   const exportCsv = () => {
     if (rows.length === 0) {
@@ -115,13 +211,11 @@ function ReportsPage() {
     toast.success("Report exported");
   };
 
-  const maxOut = Math.max(...report.months.map((m) => m.out), 1);
-
   return (
     <AppShell
       nav={USER_NAV}
       title="Reports"
-      subtitle="Monthly summaries and tax-ready exports."
+      subtitle="Where your money comes from, where it goes, and what you're worth."
       headerRight={
         <div className="flex items-center gap-2">
           <Button size="sm" variant="outline" onClick={() => setMailOpen(true)}>
@@ -133,24 +227,53 @@ function ReportsPage() {
         </div>
       }
     >
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="mb-5 flex flex-wrap items-center gap-3">
+        <div className="w-44">
+          <Select value={range} onValueChange={setRange}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {RANGES.map((r) => (
+                <SelectItem key={r.value} value={r.value}>
+                  {r.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-56">
+          <Select value={accountId} onValueChange={setAccountId}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All accounts</SelectItem>
+              {(accounts ?? []).map((a) => (
+                <SelectItem key={a.id} value={a.id}>
+                  {a.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <p className="text-xs text-muted-foreground">{report.count} transactions in range</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Spend this month"
-          value={formatMoney(report.spend, currency)}
-          hint={
-            report.delta === 0
-              ? "No prior month data"
-              : `${report.delta > 0 ? "+" : ""}${report.delta.toFixed(0)}% vs. last month`
-          }
-          tone={report.delta > 0 ? "negative" : "positive"}
-          icon={ArrowDownRight}
-        />
-        <StatCard
-          label="Income this month"
+          label="Money in"
           value={formatMoney(report.income, currency)}
-          hint={`${report.count} transactions`}
+          hint={`${report.inCats.length} sources`}
           tone="positive"
           icon={ArrowUpRight}
+        />
+        <StatCard
+          label="Money out"
+          value={formatMoney(report.spend, currency)}
+          hint={`${report.outCats.length} categories`}
+          tone="negative"
+          icon={ArrowDownRight}
         />
         <StatCard
           label="Savings rate"
@@ -158,53 +281,136 @@ function ReportsPage() {
           hint="Target 20%"
           icon={TrendingUp}
         />
+        <StatCard
+          label="Net worth"
+          value={formatMoney(netWorth, currency)}
+          hint={`${formatMoney(owed, currency)} owed`}
+          icon={Wallet}
+        />
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <SectionCard title="Spend by category">
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <StatCard label="Cash across accounts" value={formatMoney(cash, currency)} icon={Wallet} />
+        <StatCard
+          label="Assets registered"
+          value={formatMoney(assetValue, currency)}
+          hint={`${assets?.length ?? 0} assets`}
+          icon={Coins}
+        />
+        <StatCard
+          label="Investments"
+          value={formatMoney(investValue, currency)}
+          hint={`${investProfit >= 0 ? "+" : ""}${formatMoney(investProfit, currency)} profit`}
+          tone={investProfit >= 0 ? "positive" : "negative"}
+          icon={LineChartIcon}
+        />
+      </div>
+
+      <div className="mt-6">
+        <SectionCard title="Money flow">
           {isLoading ? (
             <ListSkeleton />
-          ) : report.cats.length === 0 ? (
+          ) : !sankey ? (
             <EmptyState
-              icon={PieChart}
-              title="No spending this month"
-              description="Record transactions and your category breakdown appears here."
+              icon={Scale}
+              title="No flow to map yet"
+              description="Record income and spending in this range and the flow diagram builds itself."
             />
           ) : (
-            <ul className="space-y-3">
-              {report.cats.map((c) => (
-                <li key={c.name}>
-                  <div className="mb-1 flex items-center justify-between text-sm">
-                    <span className="text-foreground">{c.name}</span>
-                    <span className="font-mono tabular-nums text-muted-foreground">
-                      {formatMoney(c.amount, currency)}
-                    </span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div className="h-full rounded-full bg-primary" style={{ width: `${c.pct}%` }} />
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="h-[360px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <Sankey
+                  data={sankey}
+                  nodePadding={22}
+                  margin={{ top: 8, right: 140, bottom: 8, left: 110 }}
+                  link={{ stroke: "hsl(var(--primary))", strokeOpacity: 0.25 }}
+                  node={{ fill: "hsl(var(--primary))" }}
+                >
+                  <Tooltip
+                    formatter={(v: number) => formatMoney(Number(v), currency)}
+                    contentStyle={{
+                      background: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 8,
+                      fontSize: 12,
+                    }}
+                  />
+                </Sankey>
+              </ResponsiveContainer>
+            </div>
+          )}
+          <p className="mt-2 text-xs text-muted-foreground">
+            Income sources on the left flow through your{" "}
+            {accountId === "all" ? "accounts" : "selected account"} into spending categories.
+          </p>
+        </SectionCard>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <SectionCard title="Spend by category">
+          {report.outCats.length === 0 ? (
+            <EmptyState
+              icon={PieChart}
+              title="No spending in this range"
+              description="Adjust the range or record transactions to see the breakdown."
+            />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="h-52">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RePieChart>
+                    <Pie
+                      data={report.outCats.slice(0, 8)}
+                      dataKey="amount"
+                      nameKey="name"
+                      innerRadius={45}
+                      outerRadius={80}
+                      paddingAngle={2}
+                    >
+                      {report.outCats.slice(0, 8).map((_, i) => (
+                        <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <ReTooltip formatter={(v: number) => formatMoney(Number(v), currency)} />
+                  </RePieChart>
+                </ResponsiveContainer>
+              </div>
+              <ul className="space-y-2.5">
+                {report.outCats.slice(0, 8).map((c, i) => (
+                  <li key={c.name} className="text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-2 text-foreground">
+                        <span
+                          className="h-2.5 w-2.5 rounded-full"
+                          style={{ background: COLORS[i % COLORS.length] }}
+                        />
+                        {c.name}
+                      </span>
+                      <span className="font-mono tabular-nums text-muted-foreground">
+                        {c.pct.toFixed(0)}% · {formatMoney(c.amount, currency)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </SectionCard>
 
-        <SectionCard title="Monthly cash flow">
-          <div className="flex h-52 items-end gap-2">
-            {report.months.map((m) => (
-              <div key={m.key} className="flex flex-1 flex-col items-center gap-1">
-                <div
-                  className="w-full rounded-t bg-primary/70"
-                  style={{ height: `${Math.max((m.out / maxOut) * 170, 4)}px` }}
-                  title={`${m.key}: ${formatMoney(m.out, currency)} out`}
-                />
-                <span className="text-[10px] text-muted-foreground">{m.key.slice(5)}</span>
-              </div>
-            ))}
+        <SectionCard title="Monthly in vs out">
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={report.months}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                <XAxis dataKey="key" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" width={48} />
+                <ReTooltip formatter={(v: number) => formatMoney(Number(v), currency)} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="in" name="In" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="out" name="Out" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Outflow across the last 7 months, from your live transactions.
-          </p>
         </SectionCard>
       </div>
 
