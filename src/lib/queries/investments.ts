@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/lib/auth";
+import { useNotify } from "@/lib/notify";
 
 type Tables = Database["public"]["Tables"];
 export type InvestmentRow = Tables["investments"]["Row"];
@@ -74,10 +75,19 @@ function useInvalidate() {
 export function useCreateInvestment() {
   const { user } = useAuth();
   const invalidate = useInvalidate();
+  const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: InvestmentInput) =>
+    mutationFn: async (input: InvestmentInput): Promise<InvestmentRow> =>
       must(await supabase.from("investments").insert({ ...input, user_id: user!.id }).select().single()),
-    onSuccess: invalidate,
+    onSuccess: (row) => {
+      invalidate();
+      notify({
+        title: "Investment opened",
+        body: `${row.name} is now tracked in your portfolio.`,
+        category: "money",
+        href: "/dashboard/investments",
+      });
+    },
   });
 }
 
@@ -104,6 +114,7 @@ export function useDeleteInvestment() {
 export function useLogContribution() {
   const { user } = useAuth();
   const invalidate = useInvalidate();
+  const notify = useNotify();
   return useMutation({
     mutationFn: async (input: {
       investment_id: string;
@@ -121,7 +132,15 @@ export function useLogContribution() {
           .select()
           .single(),
       ),
-    onSuccess: invalidate,
+    onSuccess: (row) => {
+      invalidate();
+      notify({
+        title: row.kind === "withdrawal" ? "Withdrawal recorded" : "Top-up recorded",
+        body: `${Number(row.amount).toLocaleString()} on ${row.occurred_at}.`,
+        category: "money",
+        href: "/dashboard/investments",
+      });
+    },
   });
 }
 

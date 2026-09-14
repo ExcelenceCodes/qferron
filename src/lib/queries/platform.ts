@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/lib/auth";
+import { useNotify } from "@/lib/notify";
 
 type Tables = Database["public"]["Tables"];
 export type RuleRow = Tables["rules"]["Row"];
@@ -37,10 +38,19 @@ export interface RuleInput {
 export function useCreateRule() {
   const { user } = useAuth();
   const qc = useQueryClient();
+  const notify = useNotify();
   return useMutation({
     mutationFn: async (input: RuleInput) =>
       must(await supabase.from("rules").insert({ ...input, user_id: user!.id }).select().single()),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ["rules"] }),
+    onSuccess: (row) => {
+      void qc.invalidateQueries({ queryKey: ["rules"] });
+      notify({
+        title: "Automation created",
+        body: `${row.name} will now run on your money.`,
+        category: "system",
+        href: "/dashboard/rules",
+      });
+    },
   });
 }
 
@@ -174,6 +184,7 @@ export function useAccountMembers(accountIds: string[]) {
 
 export function useAddAccountMember() {
   const qc = useQueryClient();
+  const notify = useNotify();
   return useMutation({
     mutationFn: async (input: {
       account_id: string;
@@ -182,7 +193,15 @@ export function useAddAccountMember() {
       member_role: string;
       share_pct?: number | null;
     }) => must(await supabase.from("account_members").insert(input).select().single()),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ["account_members"] }),
+    onSuccess: (row) => {
+      void qc.invalidateQueries({ queryKey: ["account_members"] });
+      notify({
+        title: "Member added",
+        body: `${row.display_name ?? row.email ?? "A member"} joined a shared account.`,
+        category: "shared",
+        href: "/dashboard/shared",
+      });
+    },
   });
 }
 
@@ -221,6 +240,7 @@ export function useReferrals() {
 export function useInviteReferral() {
   const { user } = useAuth();
   const qc = useQueryClient();
+  const notify = useNotify();
   return useMutation({
     mutationFn: async (invited_email: string) =>
       must(
@@ -230,7 +250,15 @@ export function useInviteReferral() {
           .select()
           .single(),
       ),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ["referrals"] }),
+    onSuccess: (row) => {
+      void qc.invalidateQueries({ queryKey: ["referrals"] });
+      notify({
+        title: "Invite sent",
+        body: `We invited ${row.invited_email ?? "your friend"} to Ferron.`,
+        category: "system",
+        href: "/dashboard/referrals",
+      });
+    },
   });
 }
 
