@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/lib/auth";
+import { useNotify } from "@/lib/notify";
 
 type Tables = Database["public"]["Tables"];
 export type JoinRequestRow = Tables["account_join_requests"]["Row"];
@@ -85,6 +86,7 @@ export function useRequestJoin() {
 
 export function useDecideJoinRequest() {
   const invalidate = useInvalidate();
+  const notify = useNotify();
   return useMutation({
     mutationFn: async (input: { request: JoinRequestRow; approve: boolean }) => {
       const { request, approve } = input;
@@ -107,7 +109,24 @@ export function useDecideJoinRequest() {
         }
       }
     },
-    onSuccess: invalidate,
+    onSuccess: (_d, vars) => {
+      invalidate();
+      notify({
+        title: vars.approve ? "Join request approved" : "Join request declined",
+        body: `${vars.request.requester_name ?? vars.request.requester_email ?? "Someone"} · shared account.`,
+        category: "shared",
+        href: "/dashboard/shared",
+      });
+      notify({
+        userId: vars.request.requester_id,
+        title: vars.approve ? "You're in" : "Join request declined",
+        body: vars.approve
+          ? "Your request to join a shared account was approved."
+          : "Your request to join a shared account was declined.",
+        category: "shared",
+        href: "/dashboard/shared",
+      });
+    },
   });
 }
 
