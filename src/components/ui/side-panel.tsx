@@ -39,7 +39,7 @@ export function SidePanel({
       <SheetContent
         side="right"
         className={cn(
-          "flex flex-col p-0 gap-0",
+          "flex flex-col p-0 gap-0 [&>button]:hidden",
           size === "half"
             ? "w-full sm:max-w-full lg:w-1/2 lg:max-w-[720px]"
             : "w-full sm:max-w-full h-full",
