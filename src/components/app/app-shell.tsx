@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { WallpaperBackdrop } from "@/components/wallpaper-provider";
-import { NOTIFICATIONS } from "@/lib/mock/notifications";
+import { useNotifications } from "@/lib/queries/platform";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { ChatDock } from "@/components/ai/chat-dock";
@@ -38,7 +38,8 @@ interface AppShellProps {
 export function AppShell({ nav, title, subtitle, headerRight, children }: AppShellProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
-  const unread = NOTIFICATIONS.filter((n) => !n.read).length;
+  const { data: notifications } = useNotifications();
+  const unread = (notifications ?? []).filter((n) => !n.read_at).length;
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const notifPath = nav.some((n) => n.to.endsWith("/notifications"))
