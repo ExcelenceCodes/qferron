@@ -14,16 +14,17 @@ import {
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
+  Area,
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
+  ComposedChart,
   Legend,
+  Line,
   Pie,
   PieChart as RePieChart,
   ResponsiveContainer,
-  Sankey,
-  Tooltip,
   Tooltip as ReTooltip,
   XAxis,
   YAxis,
@@ -135,7 +136,7 @@ function ReportsPage() {
     const outCats = group("out");
     const inCats = group("in");
 
-    const months: { key: string; in: number; out: number; net: number }[] = [];
+    const months: { key: string; in: number; out: number; net: number; running: number }[] = [];
     const span = range === "all" ? 12 : Math.max(Math.ceil(Number(range) / 30), 2);
     for (let i = span - 1; i >= 0; i--) {
       const d = new Date();
@@ -144,31 +145,17 @@ function ReportsPage() {
       const m = rows.filter((t) => monthKey(t.occurred_at) === key);
       const mi = m.filter((t) => t.direction === "in").reduce((s, t) => s + Number(t.amount), 0);
       const mo = m.filter((t) => t.direction === "out").reduce((s, t) => s + Number(t.amount), 0);
-      months.push({ key: key.slice(2), in: mi, out: mo, net: mi - mo });
+      months.push({ key: key.slice(2), in: mi, out: mo, net: mi - mo, running: 0 });
+    }
+    let running = 0;
+    for (const m of months) {
+      running += m.net;
+      m.running = running;
     }
 
     const savingsRate = income > 0 ? ((income - spend) / income) * 100 : 0;
     return { spend, income, outCats, inCats, months, savingsRate, count: rows.length };
   }, [rows, range]);
-
-  const sankey = useMemo(() => {
-    const inTop = report.inCats.slice(0, 6);
-    const outTop = report.outCats.slice(0, 8);
-    if (inTop.length === 0 && outTop.length === 0) return null;
-    const hub = { name: accountId === "all" ? "All accounts" : accounts?.find((a) => a.id === accountId)?.name ?? "Account" };
-    const nodes = [...inTop.map((c) => ({ name: c.name })), hub, ...outTop.map((c) => ({ name: c.name }))];
-    const hubIndex = inTop.length;
-    const links = [
-      ...inTop.map((c, i) => ({ source: i, target: hubIndex, value: Math.max(c.amount, 0.01) })),
-      ...outTop.map((c, i) => ({
-        source: hubIndex,
-        target: hubIndex + 1 + i,
-        value: Math.max(c.amount, 0.01),
-      })),
-    ];
-    if (links.length === 0) return null;
-    return { nodes, links };
-  }, [report.inCats, report.outCats, accountId, accounts]);
 
   const cash = (accounts ?? []).reduce((s, a) => s + Number(a.balance), 0);
   const assetValue = (assets ?? []).reduce((s, a) => s + Number(a.value), 0);
@@ -393,7 +380,7 @@ function ReportsPage() {
             />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="h-52">
+              <div className="h-52" role="img" aria-label="Spending split by category">
                 <ResponsiveContainer width="100%" height="100%">
                   <RePieChart>
                     <Pie
@@ -434,8 +421,8 @@ function ReportsPage() {
           )}
         </SectionCard>
 
-        <SectionCard title="Monthly in vs out">
-          <div className="h-64">
+        <SectionCard title="Income vs spending">
+          <div className="h-64" role="img" aria-label="Monthly income compared with spending">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={report.months}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
