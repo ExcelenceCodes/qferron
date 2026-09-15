@@ -18,12 +18,12 @@
   --font-display: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -67,7 +67,12 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.25rem;
+
+  --surface-glass: oklch(1 0 0 / 82%);
+  --surface-glass-strong: oklch(1 0 0 / 94%);
+  --shadow-panel: 0 12px 34px oklch(0.18 0.02 260 / 8%);
+  --shadow-control: 0 1px 2px oklch(0.18 0.02 260 / 8%);
 
   --brand-orange: oklch(0.71 0.19 45);      /* #F97316 vibe */
   --brand-blue: oklch(0.32 0.14 264);       /* deep navy */
@@ -121,6 +126,10 @@
 }
 
 .dark {
+  --surface-glass: oklch(0.185 0.02 260 / 82%);
+  --surface-glass-strong: oklch(0.185 0.02 260 / 94%);
+  --shadow-panel: 0 14px 40px oklch(0 0 0 / 28%);
+  --shadow-control: 0 1px 2px oklch(0 0 0 / 24%);
   --background: oklch(0.145 0.02 260);      /* near-black navy */
   --foreground: oklch(0.97 0.003 260);
 
@@ -178,7 +187,27 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); letter-spacing: 0; }
+  button, input, select, textarea { letter-spacing: 0; }
+}
+
+@utility glass-panel {
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(20px) saturate(140%);
+}
+
+@utility control-shadow {
+  box-shadow: var(--shadow-control);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 @utility container-page {
