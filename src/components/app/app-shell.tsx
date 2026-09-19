@@ -51,12 +51,14 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
       <WallpaperBackdrop />
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 border-r border-sidebar-border bg-sidebar transition-transform duration-200",
+          "fixed z-40 flex flex-col overflow-hidden transition-transform duration-200 ease-out",
+          "inset-y-0 left-0 w-64 border-r border-sidebar-border bg-sidebar",
+          "lg:inset-y-3 lg:left-3 lg:w-64 lg:rounded-[4px] lg:border lg:border-border/60 lg:bg-sidebar/75 lg:shadow-lg lg:shadow-black/5 lg:backdrop-blur-xl",
           "lg:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-5">
+        <div className="flex h-16 items-center justify-between border-b border-sidebar-border/70 px-5">
           <Logo />
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu">
             <X className="h-5 w-5" />

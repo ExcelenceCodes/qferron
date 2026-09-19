@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = ""; // set once a custom domain is configured
+const BASE_URL = "https://qferron.lovable.app";
 
 interface SitemapEntry {
   path: string;
