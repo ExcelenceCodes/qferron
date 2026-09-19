@@ -90,7 +90,6 @@ function SettingsPage() {
         </SectionCard>
 
         <SectionCard title="Wallpaper">
-          {/* TODO(backend): seed wallpapers into the `wallpapers` table + storage bucket. */}
           <p className="text-sm text-muted-foreground">Pick a background for your Ferron workspace.</p>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {wallpapers.map((w) => (
@@ -98,11 +97,20 @@ function SettingsPage() {
                 key={w.id}
                 type="button"
                 onClick={() => {
+                  const previous = wallpaper.id;
                   setWallpaperId(w.id);
-                  void updateProfile.mutateAsync({ wallpaper: w.id }).catch(() => {});
+                  void updateProfile
+                    .mutateAsync({ wallpaper: w.id })
+                    .then(() => toast.success(`${w.name} background applied`))
+                    .catch((e) => {
+                      setWallpaperId(previous);
+                      toast.error("Could not save background", {
+                        description: (e as Error).message,
+                      });
+                    });
                 }}
                 className={cn(
-                  "group relative aspect-video overflow-hidden rounded-lg border-2 transition-all",
+                  "group relative aspect-video overflow-hidden rounded-[4px] border-2 transition-all",
                   wallpaper.id === w.id
                     ? "border-primary ring-2 ring-primary/30"
                     : "border-border hover:border-primary/40",
