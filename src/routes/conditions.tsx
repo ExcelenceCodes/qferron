@@ -1,18 +1,15 @@
+import { publicPageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/conditions")({
-  head: () => ({
-    meta: [
-      { title: "Conditions of Use — Ferron" },
-      {
-        name: "description",
-        content: "Detailed conditions of use and privacy handling on Ferron.",
-      },
-      { property: "og:title", content: "Conditions of Use — Ferron" },
-      { property: "og:url", content: "/conditions" },
-    ],
-    links: [{ rel: "canonical", href: "/conditions" }],
-  }),
+  head: () =>
+    publicPageHead({
+      path: "/conditions",
+      title: "Conditions of Use — Ferron",
+      description:
+        "Detailed conditions of use and privacy handling on Ferron.",
+      breadcrumbs: [{ name: "Home", path: "/" }, { name: "Conditions", path: "/conditions" }],
+    }),
   component: ConditionsPage,
 });
 

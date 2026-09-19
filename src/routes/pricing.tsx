@@ -1,3 +1,4 @@
+import { publicPageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, Sparkles } from "lucide-react";
 import { useState } from "react";
@@ -6,19 +7,14 @@ import { cn } from "@/lib/utils";
 import { formatMoney } from "@/lib/format";
 
 export const Route = createFileRoute("/pricing")({
-  head: () => ({
-    meta: [
-      { title: "Pricing — Ferron" },
-      {
-        name: "description",
-        content:
-          "Transparent Ferron pricing. Free forever for individuals, Pro for power users, Teams for shared money.",
-      },
-      { property: "og:title", content: "Pricing — Ferron" },
-      { property: "og:url", content: "/pricing" },
-    ],
-    links: [{ rel: "canonical", href: "/pricing" }],
-  }),
+  head: () =>
+    publicPageHead({
+      path: "/pricing",
+      title: "Pricing — Ferron",
+      description:
+        "Transparent Ferron pricing. Free forever for individuals, Pro for power users, Teams for shared money.",
+      breadcrumbs: [{ name: "Home", path: "/" }, { name: "Pricing", path: "/pricing" }],
+    }),
   component: PricingPage,
 });
 

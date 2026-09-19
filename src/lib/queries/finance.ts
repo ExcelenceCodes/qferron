@@ -15,9 +15,9 @@ export type AssetKind = Database["public"]["Enums"]["asset_kind"];
 export type DebtKind = Database["public"]["Enums"]["debt_kind"];
 export type TxDirection = Database["public"]["Enums"]["tx_direction"];
 
-function must<T>(res: { data: T | null; error: { message: string } | null }): T {
+function must<T>(res: { data: T | null; error: { message: string } | null }): NonNullable<T> {
   if (res.error) throw new Error(res.error.message);
-  return res.data as T;
+  return res.data as NonNullable<T>;
 }
 
 /** Invalidate every finance surface — balances cascade across pages. */
@@ -61,7 +61,7 @@ export function useCreateAccount() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: AccountInput) =>
+    mutationFn: async (input: AccountInput): Promise<AccountRow> =>
       must(
         await supabase
           .from("accounts")
@@ -145,7 +145,7 @@ export function useCreateTransaction() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: TransactionInput) =>
+    mutationFn: async (input: TransactionInput): Promise<TransactionRow> =>
       must(
         await supabase
           .from("transactions")
@@ -213,7 +213,7 @@ export function useCreateAsset() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: AssetInput) =>
+    mutationFn: async (input: AssetInput): Promise<AssetRow> =>
       must(
         await supabase
           .from("assets")
@@ -298,7 +298,7 @@ export function useCreateDebt() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: DebtInput) =>
+    mutationFn: async (input: DebtInput): Promise<DebtRow> =>
       must(
         await supabase
           .from("debts")
@@ -322,7 +322,7 @@ export function useUpdateDebt() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async ({ id, ...patch }: Partial<DebtInput> & { id: string }) =>
+    mutationFn: async ({ id, ...patch }: Partial<DebtInput> & { id: string }): Promise<DebtRow> =>
       must(await supabase.from("debts").update(patch).eq("id", id).select().single()),
     onSuccess: (row) => {
       invalidate();
@@ -360,7 +360,7 @@ export function useLogDebtPayment() {
       paid_at: string;
       note?: string | null;
       account_id?: string | null;
-    }) =>
+    }): Promise<DebtPaymentRow> =>
       must(
         await supabase
           .from("debt_payments")

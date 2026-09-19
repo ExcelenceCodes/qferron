@@ -11,9 +11,9 @@ export type AccountMemberRow = Tables["account_members"]["Row"];
 export type ReferralRow = Tables["referrals"]["Row"];
 export type NotificationCategory = Database["public"]["Enums"]["notification_category"];
 
-function must<T>(res: { data: T | null; error: { message: string } | null }): T {
+function must<T>(res: { data: T | null; error: { message: string } | null }): NonNullable<T> {
   if (res.error) throw new Error(res.error.message);
-  return res.data as T;
+  return res.data as NonNullable<T>;
 }
 
 /* ------------------------------ rules ------------------------------- */
@@ -40,7 +40,7 @@ export function useCreateRule() {
   const qc = useQueryClient();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: RuleInput) =>
+    mutationFn: async (input: RuleInput): Promise<RuleRow> =>
       must(await supabase.from("rules").insert({ ...input, user_id: user!.id }).select().single()),
     onSuccess: (row) => {
       void qc.invalidateQueries({ queryKey: ["rules"] });
@@ -192,7 +192,7 @@ export function useAddAccountMember() {
       display_name: string;
       member_role: string;
       share_pct?: number | null;
-    }) => must(await supabase.from("account_members").insert(input).select().single()),
+    }): Promise<AccountMemberRow> => must(await supabase.from("account_members").insert(input).select().single()),
     onSuccess: (row) => {
       void qc.invalidateQueries({ queryKey: ["account_members"] });
       notify({
@@ -242,7 +242,7 @@ export function useInviteReferral() {
   const qc = useQueryClient();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (invited_email: string) =>
+    mutationFn: async (invited_email: string): Promise<ReferralRow> =>
       must(
         await supabase
           .from("referrals")
