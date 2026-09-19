@@ -74,7 +74,7 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
                 to={item.to}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-[4px] px-3 py-2 text-sm font-medium transition-colors",
                   active
                     ? "bg-primary/10 text-primary"
                     : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground",
@@ -88,8 +88,8 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
         </nav>
       </aside>
 
-      <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border/60 bg-background/85 px-4 backdrop-blur-md sm:px-6">
+      <div className="lg:pl-[17.5rem] lg:pr-3">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl sm:px-6 lg:top-3 lg:rounded-[4px] lg:border lg:border-border/60 lg:bg-background/65 lg:shadow-sm">
           <div className="flex min-w-0 items-center gap-3">
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu">
               <Menu className="h-5 w-5" />
@@ -145,7 +145,7 @@ export function AppShell({ nav, title, subtitle, headerRight, children }: AppShe
             </DropdownMenu>
           </div>
         </header>
-        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">{children}</div>
+        <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">{children}</div>
       </div>
 
       {!pathname.startsWith("/admin") && !pathname.startsWith("/dashboard/chat") && <ChatDock />}
@@ -171,7 +171,7 @@ interface StatCardProps {
 
 export function StatCard({ label, value, hint, tone = "default", icon: Icon }: StatCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+    <div className="group relative overflow-hidden rounded-[4px] border border-border/70 bg-card/80 p-5 backdrop-blur-sm shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
@@ -187,7 +187,7 @@ export function StatCard({ label, value, hint, tone = "default", icon: Icon }: S
           {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
         </div>
         {Icon && (
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[4px] bg-primary/10 text-primary transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
             <Icon className="h-5 w-5" />
           </span>
         )}
@@ -207,7 +207,7 @@ export function SectionCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-card shadow-sm">
+    <section className="rounded-[4px] border border-border/70 bg-card/80 shadow-sm backdrop-blur-sm">
       <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
         <h2 className="font-display text-sm font-semibold text-foreground">{title}</h2>
         {action}
