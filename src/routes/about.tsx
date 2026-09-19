@@ -1,3 +1,4 @@
+import { publicPageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { Flag, Globe, Rocket, Sparkles, Users } from "lucide-react";
 import { formatCompact } from "@/lib/format";
@@ -6,15 +7,14 @@ const analin = { url: "/media/accountants/analin.jpg" };
 const sage = { url: "/media/accountants/sage.jpg" };
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About — Ferron" },
-      { name: "description", content: "The story behind Ferron — building the world's most trusted personal accountant, one honest ledger at a time." },
-      { property: "og:title", content: "About — Ferron" },
-      { property: "og:url", content: "/about" },
-    ],
-    links: [{ rel: "canonical", href: "/about" }],
-  }),
+  head: () =>
+    publicPageHead({
+      path: "/about",
+      title: "About — Ferron",
+      description:
+        "The story behind Ferron — building the world's most trusted personal accountant, one honest ledger at a time.",
+      breadcrumbs: [{ name: "Home", path: "/" }, { name: "About", path: "/about" }],
+    }),
   component: AboutPage,
 });
 

@@ -1,3 +1,4 @@
+import { publicPageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Bot,
@@ -20,16 +21,14 @@ const financialPower = { url: "/media/vectors/financial-power.png" };
 const analysisReports = { url: "/media/vectors/analysis-reports.png" };
 
 export const Route = createFileRoute("/features")({
-  head: () => ({
-    meta: [
-      { title: "Features — Ferron" },
-      { name: "description", content: "Every Ferron feature explained plainly — accounts, sharing, automation, AI accountant, assets, reports, trash and security." },
-      { property: "og:title", content: "Features — Ferron" },
-      { property: "og:description", content: "Every Ferron feature explained plainly." },
-      { property: "og:url", content: "/features" },
-    ],
-    links: [{ rel: "canonical", href: "/features" }],
-  }),
+  head: () =>
+    publicPageHead({
+      path: "/features",
+      title: "Features — Ferron",
+      description:
+        "Every Ferron feature explained plainly — accounts, sharing, automation, AI accountant, assets, reports, trash and security.",
+      breadcrumbs: [{ name: "Home", path: "/" }, { name: "Features", path: "/features" }],
+    }),
   component: FeaturesPage,
 });
 

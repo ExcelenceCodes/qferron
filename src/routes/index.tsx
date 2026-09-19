@@ -1,3 +1,4 @@
+import { publicPageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
@@ -25,23 +26,26 @@ const lovedCommunity = { url: "/media/vectors/loved-community.png" };
 const aiVector = { url: "/media/vectors/ai.jpg" };
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Ferron — All your transactions in 1 place" },
-      {
-        name: "description",
-        content:
-          "The global AI-powered personal accountant. Track accounts, automate rules, share safely and get clear reports — for individuals, freelancers and small groups.",
-      },
-      { property: "og:title", content: "Ferron — All your transactions in 1 place" },
-      {
-        property: "og:description",
-        content: "The global AI-powered personal accountant for individuals and groups.",
-      },
-      { property: "og:url", content: "/" },
-    ],
-    links: [{ rel: "canonical", href: "/" }],
-  }),
+  head: () =>
+    publicPageHead({
+      path: "/",
+      title: "Ferron — All your transactions in 1 place",
+      description:
+        "The global AI-powered personal accountant. Track accounts, automate rules, share safely and get clear reports — for individuals, freelancers and small groups.",
+      schemas: [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Ferron",
+          applicationCategory: "FinanceApplication",
+          operatingSystem: "Web",
+          url: "https://qferron.lovable.app",
+          description:
+            "AI-powered personal and group accounting: accounts, automations, shared pools, assets, debts, investments and reports.",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        },
+      ],
+    }),
   component: LandingPage,
 });
 

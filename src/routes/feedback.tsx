@@ -1,3 +1,4 @@
+import { publicPageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { Bug, Heart, Lightbulb, MessageCircle, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
@@ -7,15 +8,14 @@ import { Newsletter } from "@/components/marketing/newsletter";
 const lovedCommunity = { url: "/media/vectors/loved-community.png" };
 
 export const Route = createFileRoute("/feedback")({
-  head: () => ({
-    meta: [
-      { title: "Feedback — Ferron" },
-      { name: "description", content: "We love your feedback. Tell the Ferron team what to build, fix or celebrate." },
-      { property: "og:title", content: "Feedback — Ferron" },
-      { property: "og:url", content: "/feedback" },
-    ],
-    links: [{ rel: "canonical", href: "/feedback" }],
-  }),
+  head: () =>
+    publicPageHead({
+      path: "/feedback",
+      title: "Feedback — Ferron",
+      description:
+        "We love your feedback. Tell the Ferron team what to build, fix or celebrate.",
+      breadcrumbs: [{ name: "Home", path: "/" }, { name: "Feedback", path: "/feedback" }],
+    }),
   component: FeedbackPage,
 });
 

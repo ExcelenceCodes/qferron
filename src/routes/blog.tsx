@@ -1,3 +1,4 @@
+import { publicPageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Clock, Search, User } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -5,20 +6,14 @@ import { formatDate } from "@/lib/format";
 import { listPosts } from "@/lib/mock/blog";
 
 export const Route = createFileRoute("/blog")({
-  head: () => ({
-    meta: [
-      { title: "Blog — Ferron" },
-      {
-        name: "description",
-        content:
-          "Ideas, product news, and money-mindset writing from the Ferron team.",
-      },
-      { property: "og:title", content: "Blog — Ferron" },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "/blog" },
-    ],
-    links: [{ rel: "canonical", href: "/blog" }],
-  }),
+  head: () =>
+    publicPageHead({
+      path: "/blog",
+      title: "Blog — Ferron",
+      description:
+        "Ideas, product news, and money-mindset writing from the Ferron team.",
+      breadcrumbs: [{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }],
+    }),
   component: BlogPage,
 });
 
