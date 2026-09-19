@@ -96,13 +96,12 @@ export function WallpaperBackdrop() {
   const { wallpaper } = useWallpaper();
   if (wallpaper.kind === "solid" || !wallpaper.url) return null;
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10">
-      <img
-        src={wallpaper.url}
-        alt=""
-        className="h-full w-full object-cover opacity-30 dark:opacity-20"
+    <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${wallpaper.url})` }}
       />
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-background/55 dark:bg-background/70" />
     </div>
   );
 }
