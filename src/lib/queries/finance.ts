@@ -354,13 +354,13 @@ export function useLogDebtPayment() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input:: Promise<DebtPaymentRow> {
+    mutationFn: async (input: {
       debt_id: string;
       amount: number;
       paid_at: string;
       note?: string | null;
       account_id?: string | null;
-    }) =>
+    }): Promise<DebtPaymentRow> =>
       must(
         await supabase
           .from("debt_payments")

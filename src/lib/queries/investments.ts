@@ -116,7 +116,7 @@ export function useLogContribution() {
   const invalidate = useInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input:: Promise<ContributionRow> {
+    mutationFn: async (input: {
       investment_id: string;
       amount: number;
       kind: string;
@@ -124,7 +124,7 @@ export function useLogContribution() {
       note?: string | null;
       /** Money rotation: account the contribution moves through. */
       account_id?: string | null;
-    }) =>
+    }): Promise<ContributionRow> =>
       must(
         await supabase
           .from("investment_contributions")

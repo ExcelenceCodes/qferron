@@ -186,13 +186,13 @@ export function useAddAccountMember() {
   const qc = useQueryClient();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input:: Promise<AccountMemberRow> {
+    mutationFn: async (input: {
       account_id: string;
       email: string;
       display_name: string;
       member_role: string;
       share_pct?: number | null;
-    }) => must(await supabase.from("account_members").insert(input).select().single()),
+    }): Promise<AccountMemberRow> => must(await supabase.from("account_members").insert(input).select().single()),
     onSuccess: (row) => {
       void qc.invalidateQueries({ queryKey: ["account_members"] });
       notify({
