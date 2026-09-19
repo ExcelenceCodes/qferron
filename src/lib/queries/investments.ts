@@ -116,7 +116,7 @@ export function useLogContribution() {
   const invalidate = useInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: {
+    mutationFn: async (input:: Promise<ContributionRow> {
       investment_id: string;
       amount: number;
       kind: string;

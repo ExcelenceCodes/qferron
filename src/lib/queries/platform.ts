@@ -40,7 +40,7 @@ export function useCreateRule() {
   const qc = useQueryClient();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: RuleInput) =>
+    mutationFn: async (input: RuleInput): Promise<RuleRow> =>
       must(await supabase.from("rules").insert({ ...input, user_id: user!.id }).select().single()),
     onSuccess: (row) => {
       void qc.invalidateQueries({ queryKey: ["rules"] });
@@ -186,7 +186,7 @@ export function useAddAccountMember() {
   const qc = useQueryClient();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: {
+    mutationFn: async (input:: Promise<AccountMemberRow> {
       account_id: string;
       email: string;
       display_name: string;
@@ -242,7 +242,7 @@ export function useInviteReferral() {
   const qc = useQueryClient();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (invited_email: string) =>
+    mutationFn: async (invited_email: string): Promise<ReferralRow> =>
       must(
         await supabase
           .from("referrals")

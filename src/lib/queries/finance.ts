@@ -61,7 +61,7 @@ export function useCreateAccount() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: AccountInput) =>
+    mutationFn: async (input: AccountInput): Promise<AccountRow> =>
       must(
         await supabase
           .from("accounts")
@@ -145,7 +145,7 @@ export function useCreateTransaction() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: TransactionInput) =>
+    mutationFn: async (input: TransactionInput): Promise<TransactionRow> =>
       must(
         await supabase
           .from("transactions")
@@ -213,7 +213,7 @@ export function useCreateAsset() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: AssetInput) =>
+    mutationFn: async (input: AssetInput): Promise<AssetRow> =>
       must(
         await supabase
           .from("assets")
@@ -298,7 +298,7 @@ export function useCreateDebt() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: DebtInput) =>
+    mutationFn: async (input: DebtInput): Promise<DebtRow> =>
       must(
         await supabase
           .from("debts")
@@ -322,7 +322,7 @@ export function useUpdateDebt() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async ({ id, ...patch }: Partial<DebtInput> & { id: string }) =>
+    mutationFn: async ({ id, ...patch }: Partial<DebtInput> & { id: string }): Promise<DebtRow> =>
       must(await supabase.from("debts").update(patch).eq("id", id).select().single()),
     onSuccess: (row) => {
       invalidate();
@@ -354,7 +354,7 @@ export function useLogDebtPayment() {
   const invalidate = useFinanceInvalidate();
   const notify = useNotify();
   return useMutation({
-    mutationFn: async (input: {
+    mutationFn: async (input:: Promise<DebtPaymentRow> {
       debt_id: string;
       amount: number;
       paid_at: string;
