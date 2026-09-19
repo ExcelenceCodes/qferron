@@ -11,9 +11,9 @@ export type AccountMemberRow = Tables["account_members"]["Row"];
 export type ReferralRow = Tables["referrals"]["Row"];
 export type NotificationCategory = Database["public"]["Enums"]["notification_category"];
 
-function must<T>(res: { data: T | null; error: { message: string } | null }): T {
+function must<T>(res: { data: T | null; error: { message: string } | null }): NonNullable<T> {
   if (res.error) throw new Error(res.error.message);
-  return res.data as T;
+  return res.data as NonNullable<T>;
 }
 
 /* ------------------------------ rules ------------------------------- */

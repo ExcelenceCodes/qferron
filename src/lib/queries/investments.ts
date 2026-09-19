@@ -9,9 +9,9 @@ export type InvestmentRow = Tables["investments"]["Row"];
 export type ContributionRow = Tables["investment_contributions"]["Row"];
 export type InvestmentKind = Database["public"]["Enums"]["investment_kind"];
 
-function must<T>(res: { data: T | null; error: { message: string } | null }): T {
+function must<T>(res: { data: T | null; error: { message: string } | null }): NonNullable<T> {
   if (res.error) throw new Error(res.error.message);
-  return res.data as T;
+  return res.data as NonNullable<T>;
 }
 
 export const INVESTMENT_KINDS: { value: InvestmentKind; label: string }[] = [

@@ -7,9 +7,9 @@ type Tables = Database["public"]["Tables"];
 export type ChatThreadRow = Tables["chat_threads"]["Row"];
 export type ChatMessageRow = Tables["chat_messages"]["Row"];
 
-function must<T>(res: { data: T | null; error: { message: string } | null }): T {
+function must<T>(res: { data: T | null; error: { message: string } | null }): NonNullable<T> {
   if (res.error) throw new Error(res.error.message);
-  return res.data as T;
+  return res.data as NonNullable<T>;
 }
 
 export function useChatThreads() {

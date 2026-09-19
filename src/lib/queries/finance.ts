@@ -15,9 +15,9 @@ export type AssetKind = Database["public"]["Enums"]["asset_kind"];
 export type DebtKind = Database["public"]["Enums"]["debt_kind"];
 export type TxDirection = Database["public"]["Enums"]["tx_direction"];
 
-function must<T>(res: { data: T | null; error: { message: string } | null }): T {
+function must<T>(res: { data: T | null; error: { message: string } | null }): NonNullable<T> {
   if (res.error) throw new Error(res.error.message);
-  return res.data as T;
+  return res.data as NonNullable<T>;
 }
 
 /** Invalidate every finance surface — balances cascade across pages. */
