@@ -149,7 +149,8 @@ export function useCreateTransaction() {
       must(
         await supabase
           .from("transactions")
-          .insert({ ...input, user_id: user!.id })
+          // Every transaction carries its SML record in the background.
+          .insert({ ...input, user_id: user!.id, sml: transactionToSml(input) })
           .select()
           .single(),
       ),
