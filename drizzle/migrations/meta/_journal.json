@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789932135033,
+      "tag": "0000_sml_automations_engine_and_asset_sale",
+      "breakpoints": true
+    }
+  ]
+}

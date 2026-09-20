@@ -238,6 +238,11 @@ export type Database = {
           kind: Database["public"]["Enums"]["asset_kind"]
           name: string
           note: string | null
+          sold_account_id: string | null
+          sold_at: string | null
+          sold_tx_id: string | null
+          sold_value: number | null
+          status: Database["public"]["Enums"]["asset_status"]
           updated_at: string
           user_id: string
           value: number
@@ -252,6 +257,11 @@ export type Database = {
           kind?: Database["public"]["Enums"]["asset_kind"]
           name: string
           note?: string | null
+          sold_account_id?: string | null
+          sold_at?: string | null
+          sold_tx_id?: string | null
+          sold_value?: number | null
+          status?: Database["public"]["Enums"]["asset_status"]
           updated_at?: string
           user_id: string
           value?: number
@@ -266,6 +276,11 @@ export type Database = {
           kind?: Database["public"]["Enums"]["asset_kind"]
           name?: string
           note?: string | null
+          sold_account_id?: string | null
+          sold_at?: string | null
+          sold_tx_id?: string | null
+          sold_value?: number | null
+          status?: Database["public"]["Enums"]["asset_status"]
           updated_at?: string
           user_id?: string
           value?: number
@@ -281,6 +296,20 @@ export type Database = {
           {
             foreignKeyName: "assets_funding_tx_id_fkey"
             columns: ["funding_tx_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_sold_account_id_fkey"
+            columns: ["sold_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_sold_tx_id_fkey"
+            columns: ["sold_tx_id"]
             isOneToOne: false
             referencedRelation: "transactions"
             referencedColumns: ["id"]
@@ -851,11 +880,59 @@ export type Database = {
         }
         Relationships: []
       }
+      rule_runs: {
+        Row: {
+          created_at: string
+          detail: string | null
+          id: string
+          rule_id: string | null
+          status: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          rule_id?: string | null
+          status?: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          rule_id?: string | null
+          status?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rule_runs_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rule_runs_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rules: {
         Row: {
+          action_account_id: string | null
           action_expr: string
           action_type: string
           action_value: string
+          amount_kind: string
+          amount_value: number
           condition_field: string
           condition_value: string
           created_at: string
@@ -866,14 +943,18 @@ export type Database = {
           match_expr: string
           name: string
           operator: string
+          sml: string | null
           trigger_type: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          action_account_id?: string | null
           action_expr?: string
           action_type?: string
           action_value?: string
+          amount_kind?: string
+          amount_value?: number
           condition_field?: string
           condition_value?: string
           created_at?: string
@@ -884,14 +965,18 @@ export type Database = {
           match_expr?: string
           name: string
           operator?: string
+          sml?: string | null
           trigger_type?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          action_account_id?: string | null
           action_expr?: string
           action_type?: string
           action_value?: string
+          amount_kind?: string
+          amount_value?: number
           condition_field?: string
           condition_value?: string
           created_at?: string
@@ -902,16 +987,26 @@ export type Database = {
           match_expr?: string
           name?: string
           operator?: string
+          sml?: string | null
           trigger_type?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "rules_action_account_id_fkey"
+            columns: ["action_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transactions: {
         Row: {
           account_id: string
           amount: number
+          auto_rule_id: string | null
           category: string
           created_at: string
           currency: string
@@ -920,12 +1015,14 @@ export type Database = {
           merchant: string | null
           note: string | null
           occurred_at: string
+          sml: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           account_id: string
           amount: number
+          auto_rule_id?: string | null
           category?: string
           created_at?: string
           currency?: string
@@ -934,12 +1031,14 @@ export type Database = {
           merchant?: string | null
           note?: string | null
           occurred_at?: string
+          sml?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           account_id?: string
           amount?: number
+          auto_rule_id?: string | null
           category?: string
           created_at?: string
           currency?: string
@@ -948,6 +1047,7 @@ export type Database = {
           merchant?: string | null
           note?: string | null
           occurred_at?: string
+          sml?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -957,6 +1057,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_auto_rule_id_fkey"
+            columns: ["auto_rule_id"]
+            isOneToOne: false
+            referencedRelation: "rules"
             referencedColumns: ["id"]
           },
         ]
@@ -1050,6 +1157,7 @@ export type Database = {
       account_type: "cash" | "bank" | "mobile" | "wallet" | "card" | "shared"
       app_role: "admin" | "moderator" | "user"
       asset_kind: "property" | "vehicle" | "equity" | "crypto" | "other"
+      asset_status: "owned" | "sold"
       debt_kind: "loan" | "credit"
       debt_status: "active" | "settled" | "overdue"
       feedback_status: "new" | "in_review" | "closed"
@@ -1196,6 +1304,7 @@ export const Constants = {
       account_type: ["cash", "bank", "mobile", "wallet", "card", "shared"],
       app_role: ["admin", "moderator", "user"],
       asset_kind: ["property", "vehicle", "equity", "crypto", "other"],
+      asset_status: ["owned", "sold"],
       debt_kind: ["loan", "credit"],
       debt_status: ["active", "settled", "overdue"],
       feedback_status: ["new", "in_review", "closed"],
