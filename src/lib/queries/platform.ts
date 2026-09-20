@@ -33,6 +33,33 @@ export interface RuleInput {
   match_expr: string;
   action_expr: string;
   enabled?: boolean;
+  trigger_type?: string;
+  condition_field?: string;
+  operator?: string;
+  condition_value?: string;
+  action_type?: string;
+  action_value?: string;
+  action_account_id?: string | null;
+  amount_kind?: string;
+  amount_value?: number;
+  sml?: string;
+}
+
+/** Execution log of the automation engine (database trigger writes it). */
+export function useRuleRuns(limit = 25) {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["rule_runs", user?.id, limit],
+    enabled: !!user,
+    queryFn: async () =>
+      must(
+        await supabase
+          .from("rule_runs")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(limit),
+      ),
+  });
 }
 
 export function useCreateRule() {
